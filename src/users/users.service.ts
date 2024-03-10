@@ -1,26 +1,65 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
+import { User } from './entities/user.entity';
+import { CreateUserDto, ResetPasswordDto } from 'src/auth/dto';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  private readonly logger = new Logger('UsersService');
+
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
+  ) { }
+
+
+  async findOneByEmail(email: string): Promise<User | undefined> {
+    return this.userRepository.findOne({
+      where: { email },
+      select: { email: true, password: true, id: true, fullName: true, roles: true }
+    });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOneById(id: string): Promise<User | undefined> {
+    return this.userRepository.findOneBy({ id });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async create(createUserDto: CreateUserDto): Promise<User | undefined> {
+    return await this._createUser(createUserDto);
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateUserRoles(user: User, roles: string[]) {
+    user.roles = roles;
+    this.userRepository.save(user);
   }
+  async updateUserPassword(id: string, resetPasswordDto: ResetPasswordDto): Promise<User | undefined> {
+    try {
+      const user = await this.findOneById(id);
+      if (!user) throw new NotFoundException(`User not found`);
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+      user.password = bcrypt.hashSync(resetPasswordDto.password, 10);
+
+      await this.userRepository.save(user);
+      delete user.password;
+      return user;
+    } catch (error) {
+      throw new InternalServerErrorException('Unexpected error, check server logs');
+    }
+  }
+  private async _createUser(createUserDto: CreateUserDto): Promise<User | undefined> {
+    const { password, ...userData } = createUserDto;
+
+    const user = this.userRepository.create({
+      ...userData,
+      password: bcrypt.hashSync(password, 10)
+    });
+
+    await this.userRepository.save(user);
+    delete user.password;
+    return user;
   }
 }
