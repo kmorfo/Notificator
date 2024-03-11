@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 
 import { User } from './entities/user.entity';
 import { CreateUserDto, ResetPasswordDto } from 'src/auth/dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,9 @@ export class UsersService {
     private readonly userRepository: Repository<User>
   ) { }
 
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find()
+  }
 
   async findOneByEmail(email: string): Promise<User | undefined> {
     return this.userRepository.findOne({
@@ -62,4 +66,22 @@ export class UsersService {
     delete user.password;
     return user;
   }
+
+  async update(updateUserDto: UpdateUserDto, user: User): Promise<User | undefined> {
+    try {
+      const { email, fullName, isActive } = updateUserDto;
+
+      //If email is changed, check if exist
+      if (email != undefined && email != user.email && await this.findOneByEmail(email) != undefined)
+        throw new BadRequestException('The Email sent belongs to another user');
+
+      const userUpdated = await this.userRepository.preload({ id: user.id, email: email, fullName: fullName, isActive: isActive })
+      this.userRepository.save(userUpdated)
+
+      return userUpdated;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
