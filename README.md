@@ -5,7 +5,6 @@
 ## Description
 
 
-
 # Notifications API
 1. Clone repositoty
 2. ```yarn install```
@@ -41,3 +40,5 @@ $ yarn run test:e2e
 $ yarn run test:cov
 ```
 
+### Links
+[Implement in-app notifications with NestJS, MySQL, and Firebase](https://blog.logrocket.com/implement-in-app-notifications-nestjs-mysql-firebase)

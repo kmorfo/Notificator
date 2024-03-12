@@ -1,22 +1,22 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('projects')
-export class Project {
+@Entity('devices')
+export class Device {
     @ApiProperty({
         example: '02aff58c-95a2-4acd-ac3c-14f894247679',
         uniqueItems: true,
-        description: 'Project ID'
+        description: 'Device ID'
     })
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @ApiProperty({
-        description: 'Name of Firebase Project',
-        example: 'firebaseProject',
-        minLength: 1
+        description: 'Device token for this App',
+        example: 'g4e56s6vsdrb6e56',
+        minLength: 2
     })
     @Column('text')
-    name: string;
+    token: string;
 
 }

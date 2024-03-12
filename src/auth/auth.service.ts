@@ -44,7 +44,7 @@ export class AuthService {
 
     delete user.password;
 
-    console.log(`El mamoncete ${user.fullName} se acaba de conectar`);
+    console.log(`El mamoncete ${user.username} se acaba de conectar`);
     return { ...user, token: this.getJwToken({ id: user.id }) };
   }
 

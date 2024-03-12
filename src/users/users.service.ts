@@ -24,7 +24,7 @@ export class UsersService {
   async findOneByEmail(email: string): Promise<User | undefined> {
     return this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true, id: true, fullName: true, roles: true }
+      select: { email: true, password: true, id: true, username: true, roles: true }
     });
   }
 
@@ -69,13 +69,13 @@ export class UsersService {
 
   async update(updateUserDto: UpdateUserDto, user: User): Promise<User | undefined> {
     try {
-      const { email, fullName, isActive } = updateUserDto;
+      const { email, username, isActive } = updateUserDto;
 
       //If email is changed, check if exist
       if (email != undefined && email != user.email && await this.findOneByEmail(email) != undefined)
         throw new BadRequestException('The Email sent belongs to another user');
 
-      const userUpdated = await this.userRepository.preload({ id: user.id, email: email, fullName: fullName, isActive: isActive })
+      const userUpdated = await this.userRepository.preload({ id: user.id, email: email, username: username, isActive: isActive })
       this.userRepository.save(userUpdated)
 
       return userUpdated;

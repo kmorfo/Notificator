@@ -5,8 +5,9 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { ApplicationsModule } from './applications/applications.module';
-import { ProjectModule } from './project/project.module';
 import { ProjectsModule } from './projects/projects.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { DevicesModule } from './devices/devices.module';
 
 
 @Module({
@@ -26,8 +27,9 @@ import { ProjectsModule } from './projects/projects.module';
     MailModule,
     AppModule,
     ApplicationsModule,
-    ProjectModule,
     ProjectsModule,
+    NotificationsModule,
+    DevicesModule,
     ],
   controllers: [],
   providers: [],

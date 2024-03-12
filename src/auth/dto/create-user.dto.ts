@@ -27,13 +27,13 @@ export class CreateUserDto {
     password: string;
 
     @ApiProperty({
-        description: 'Full name of user',
+        description: 'User name',
         example: 'Pedro Garcia',
         minLength: 1
     })
     @IsString()
     @MinLength(1)
-    fullName: string;
+    username: string;
 
     @ApiProperty({
         description: 'List of user roles',

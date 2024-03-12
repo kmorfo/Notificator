@@ -30,12 +30,12 @@ export class User {
     password: string;
 
     @ApiProperty({
-        description: 'Full name of user',
+        description: 'Username',
         example: 'Pedro Garcia',
         minLength: 1
     })
     @Column('text')
-    fullName: string;
+    username: string;
 
     @ApiProperty({
         description: 'Indicates if the user is active in the system'

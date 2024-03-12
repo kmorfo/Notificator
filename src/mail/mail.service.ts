@@ -15,7 +15,7 @@ export class MailService {
       subject: 'Password reset notification',
       template: './resetpassword',
       context: {
-        name: user.fullName,
+        name: user.username,
         urltoken,
       },
     });

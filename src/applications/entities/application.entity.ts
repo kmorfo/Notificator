@@ -27,12 +27,6 @@ export class Application {
     @Column('text')
     name: string;
 
-    @ApiProperty({
-        description: 'Full name of application',
-        example: 'CienciasOcultasApp',
-        minLength: 2
-    })
-    @Column('text')
-    token: string;
+
 
 }

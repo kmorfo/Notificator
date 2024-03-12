@@ -31,7 +31,7 @@ export class UserRoleGuard implements CanActivate {
       if (validRoles.includes(role)) return true
 
     console.log('UserRoleGuard', validRoles)
-    throw new ForbiddenException(`User ${user.fullName} need a valid role: [${validRoles}]`)
+    throw new ForbiddenException(`User ${user.username} need a valid role: [${validRoles}]`)
   }
 }
 //Para crear el guard $nest g gu auth/guards/userRole 
