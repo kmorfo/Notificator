@@ -14,7 +14,7 @@ export class CreateApplicationDto {
     @MaxLength(100)
     @Matches(
         /^([a-zA-Z]{2,4})\.[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)+$/, {
-        message: 'Application package. The package must have a valid package name'
+        message: 'Application package. The package must have a valid package name like: com.example.appname '
     })
     package: string;
 

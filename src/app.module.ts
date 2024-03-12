@@ -5,6 +5,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { ApplicationsModule } from './applications/applications.module';
+import { ProjectModule } from './project/project.module';
+import { ProjectsModule } from './projects/projects.module';
 
 
 @Module({
@@ -24,6 +26,8 @@ import { ApplicationsModule } from './applications/applications.module';
     MailModule,
     AppModule,
     ApplicationsModule,
+    ProjectModule,
+    ProjectsModule,
     ],
   controllers: [],
   providers: [],

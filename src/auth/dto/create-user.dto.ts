@@ -37,12 +37,12 @@ export class CreateUserDto {
 
     @ApiProperty({
         description: 'List of user roles',
-        example: ['ADMIN', 'USER', 'ROOT'],
+        example: ['ADMIN', 'USER'],
         default: ['USER']
     })
     @IsString({ each: true })
     @IsArray()
-    // @IsIn(['ADMIN', 'USER', 'ROOT'])
+    @IsIn(['ADMIN', 'USER'])
     @IsOptional()
     roles?: string[];
 
