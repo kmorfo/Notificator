@@ -8,6 +8,7 @@ import { ApplicationsModule } from './applications/applications.module';
 import { ProjectsModule } from './projects/projects.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { DevicesModule } from './devices/devices.module';
+import { MessagesModule } from './messages/messages.module';
 
 
 @Module({
@@ -30,6 +31,7 @@ import { DevicesModule } from './devices/devices.module';
     ProjectsModule,
     NotificationsModule,
     DevicesModule,
+    MessagesModule,
     ],
   controllers: [],
   providers: [],

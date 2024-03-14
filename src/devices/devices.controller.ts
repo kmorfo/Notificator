@@ -1,14 +1,18 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+
 import { DevicesService } from './devices.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 
+@ApiTags('Devices')
 @Controller('devices')
 export class DevicesController {
   constructor(private readonly devicesService: DevicesService) {}
 
   @Post()
   create(@Body() createDeviceDto: CreateDeviceDto) {
+    console.log(createDeviceDto)
     return this.devicesService.create(createDeviceDto);
   }
 

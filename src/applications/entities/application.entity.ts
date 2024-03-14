@@ -12,12 +12,20 @@ export class Application {
     id: string;
 
     @ApiProperty({
-        description: 'Package of application',
-        example: 'com.example.CienciasOcultasApp',
+        description: 'ApplicationId',
+        example: 'com.example.appname',
         minLength: 2
     })
     @Column('text')
-    package: string;
+    applicationId: string;
+
+    @ApiProperty({
+        description: 'App SHA',
+        example: 'DA:39:A3:EE:5E:6B:4B:0D:32:55:BF:EF:95:60:18:90:AF:D8:07:09',
+        minLength: 2
+    })
+    @Column('text')
+    sha: string;
 
     @ApiProperty({
         description: 'Full name of application',
@@ -26,7 +34,4 @@ export class Application {
     })
     @Column('text')
     name: string;
-
-
-
 }
