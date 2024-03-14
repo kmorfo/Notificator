@@ -9,6 +9,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { DevicesModule } from './devices/devices.module';
 import { MessagesModule } from './messages/messages.module';
+import { ChannelsModule } from './channels/channels.module';
 
 
 @Module({
@@ -32,6 +33,7 @@ import { MessagesModule } from './messages/messages.module';
     NotificationsModule,
     DevicesModule,
     MessagesModule,
+    ChannelsModule,
     ],
   controllers: [],
   providers: [],
