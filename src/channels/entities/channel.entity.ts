@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Application } from "src/applications/entities/application.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Device } from "src/devices/entities/device.entity";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('Channels')
 export class Channel {
@@ -21,9 +22,12 @@ export class Channel {
     name: string;
 
     @ManyToOne(
-        ()=> Application,
-        (application)=>application.channels,
-        {onDelete:'CASCADE'}
+        () => Application,
+        (application) => application.channels,
+        { onDelete: 'CASCADE' }
     )
-    application:Application
+    application: Application
+
+    @ManyToMany(() => Device)
+    devices?: Device[]
 }

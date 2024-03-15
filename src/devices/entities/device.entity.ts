@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Application } from "src/applications/entities/application.entity";
+import { Channel } from "src/channels/entities/channel.entity";
 import { Message } from "src/messages/entities/message.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -54,5 +55,7 @@ export class Device {
     )
     application: Application
 
-    //TODO: Create channels
+    @ManyToMany(() => Channel)
+    @JoinTable()
+    channels?: Channel[]
 }
