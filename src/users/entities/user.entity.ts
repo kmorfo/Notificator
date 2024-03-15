@@ -1,6 +1,8 @@
 
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Application } from "src/applications/entities/application.entity";
+import { Project } from "src/projects/entities/project.entity";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users')
 export class User {
@@ -46,4 +48,16 @@ export class User {
     @ApiProperty({ enum: ['ADMIN', 'USER'] })
     @Column('text', { array: true, default: ['ADMIN'] })
     roles: string[];
+
+    @OneToMany(
+        () => Project,
+        (project) => project.user,
+        { onDelete: 'CASCADE' }
+    )
+    projects: Project[]
+
+    @ManyToMany(() => Application)
+    @JoinTable()
+    application?: Application[]
+
 }

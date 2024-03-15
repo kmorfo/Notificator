@@ -42,3 +42,5 @@ $ yarn run test:cov
 
 ### Links
 [Implement in-app notifications with NestJS, MySQL, and Firebase](https://blog.logrocket.com/implement-in-app-notifications-nestjs-mysql-firebase)
+
+[TypeORM Docs](https://orkhan.gitbook.io/typeorm/docs)

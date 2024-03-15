@@ -1,7 +1,7 @@
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Body, Controller, Get, Patch } from "@nestjs/common";
 
-import { Auth, GetUser } from "src/decorators";
+import { Auth, GetUser } from "src/auth/decorators";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { UsersService } from "./users.service";

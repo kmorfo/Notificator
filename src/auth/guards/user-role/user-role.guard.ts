@@ -3,7 +3,7 @@ import { BadRequestException, CanActivate, ExecutionContext, ForbiddenException,
 import { Observable } from 'rxjs';
 
 import { User } from 'src/users/entities/user.entity';
-import { META_ROLES } from 'src/decorators';
+import { META_ROLES } from 'src/auth/decorators';
 
 
 @Injectable()

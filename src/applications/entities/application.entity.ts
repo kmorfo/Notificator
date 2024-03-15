@@ -3,6 +3,7 @@ import { Channel } from "src/channels/entities/channel.entity";
 import { Device } from "src/devices/entities/device.entity";
 import { Message } from "src/messages/entities/message.entity";
 import { Project } from "src/projects/entities/project.entity";
+import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('applications')
@@ -63,4 +64,8 @@ export class Application {
         { onDelete: 'CASCADE' }
     )
     devices?: Device[]
+
+    @ManyToMany(() => User)
+    @JoinTable()
+    users: User[]
 }
