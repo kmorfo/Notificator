@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Application } from "src/applications/entities/application.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('projects')
 export class Project {
@@ -18,5 +19,12 @@ export class Project {
     })
     @Column('text')
     name: string;
+
+    @OneToMany(
+        () => Application,
+        (application) => application.project,
+        { onDelete: 'CASCADE' }
+    )
+    applications?: Application[]
 
 }
