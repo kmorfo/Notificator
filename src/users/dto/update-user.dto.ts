@@ -12,5 +12,4 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsOptional()
     isActive: boolean;
 
-
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
 
 export class CreateApplicationDto {
 
@@ -39,4 +39,11 @@ export class CreateApplicationDto {
     })
     sha: string;
 
+    @ApiProperty({
+        description: 'Project UID',
+        example: 'Pedro Garcia',
+        minLength: 1
+    })
+    @IsUUID()
+    projectUID: string;
 }

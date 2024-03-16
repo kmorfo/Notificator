@@ -10,6 +10,6 @@ import { Application } from './entities/application.entity';
   controllers: [ApplicationsController],
   providers: [ApplicationsService],
   imports: [TypeOrmModule.forFeature([Application]), AuthModule, UsersModule],
-  exports: [ApplicationsModule]
+  exports: [ApplicationsModule,ApplicationsService]
 })
 export class ApplicationsModule { }

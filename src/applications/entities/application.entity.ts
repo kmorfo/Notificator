@@ -40,6 +40,12 @@ export class Application {
     @Column('text')
     name: string;
 
+    @ApiProperty({
+        description: 'Indicates if the application is active in the system'
+    })
+    @Column('bool', { default: true })
+    isActive: boolean;
+
     @OneToMany(
         () => Channel,
         (channel) => channel.application,

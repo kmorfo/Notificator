@@ -21,6 +21,12 @@ export class Project {
     @Column('text')
     name: string;
 
+    @ApiProperty({
+        description: 'Indicates if the project is active in the system'
+    })
+    @Column('bool', { default: true })
+    isActive: boolean;
+
     @OneToMany(
         () => Application,
         (application) => application.project,
