@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
+import { ArrayMinSize, IsArray, IsOptional, IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
 
 export class CreateApplicationDto {
 
@@ -29,15 +29,15 @@ export class CreateApplicationDto {
 
     @ApiProperty({
         description: 'App SHA',
-        example: 'DA:39:A3:EE:5E:6B:4B:0D:32:55:BF:EF:95:60:18:90:AF:D8:07:09',
-        minLength: 2
+        example: ['DA:39:A3:EE:5E:6B:4B:0D:32:55:BF:EF:95:60:18:90:AF:D8:07:09']
     })
-    @IsString()
     @Matches(
-        /^[0-9A-Fa-f]{2}(?::[0-9A-Fa-f]{2}){19}$/, {
-        message: 'SHA Must be a Valid SHA sign'
-    })
+        /^[0-9A-Fa-f]{2}(?::[0-9A-Fa-f]{2}){19}$/,
+        { each: true, message: 'Each SHA must be a valid SHA sign' }
+    )
+    @IsArray()
     @IsOptional()
+    @IsString({ each: true })
     validSHA: string[];
 
     @ApiProperty({

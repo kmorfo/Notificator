@@ -1,18 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { DevicesService } from './devices.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
+import { Device } from './entities/device.entity';
+import { AppAllowedGuard } from './guards/app-allowed.guard';
 
 @ApiTags('Devices')
 @Controller('devices')
 export class DevicesController {
-  constructor(private readonly devicesService: DevicesService) {}
+  constructor(private readonly devicesService: DevicesService) { }
 
   @Post()
+  @UseGuards(AppAllowedGuard)
+  @ApiResponse({ status: 201, description: 'Device was created', type: Device })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Non valid SHA sign' })
+  @ApiResponse({ status: 404, description: 'Not Found. ApplicationID not found' })
   create(@Body() createDeviceDto: CreateDeviceDto) {
-    console.log(createDeviceDto)
     return this.devicesService.create(createDeviceDto);
   }
 

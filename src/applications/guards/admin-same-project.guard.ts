@@ -3,7 +3,6 @@ import { Observable } from 'rxjs';
 import { Request } from 'express';
 
 import { User } from 'src/users/entities/user.entity';
-import { Project } from 'src/projects/entities/project.entity';
 
 @Injectable()
 export class AdminSameProjectGuard implements CanActivate {

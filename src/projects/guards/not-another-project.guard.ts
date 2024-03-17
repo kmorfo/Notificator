@@ -8,7 +8,7 @@ export class NotAnotherProjectGuard implements CanActivate {
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        //Get Authenticated user
+        //Get request
         const req = context.switchToHttp().getRequest<Request>();
 
         const projectName = req.body?.['name']

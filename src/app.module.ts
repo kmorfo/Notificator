@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { MailModule } from './mail/mail.module';
+
 import { ApplicationsModule } from './applications/applications.module';
-import { ProjectsModule } from './projects/projects.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { DevicesModule } from './devices/devices.module';
-import { MessagesModule } from './messages/messages.module';
+import { AuthModule } from './auth/auth.module';
 import { ChannelsModule } from './channels/channels.module';
+import { DevicesModule } from './devices/devices.module';
+import { MailModule } from './mail/mail.module';
+import { MessagesModule } from './messages/messages.module';
+import { ProjectsModule } from './projects/projects.module';
+import { UsersModule } from './users/users.module';
 
 
 @Module({
@@ -24,16 +24,15 @@ import { ChannelsModule } from './channels/channels.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    UsersModule,
-    AuthModule,
-    MailModule,
-    AppModule,
     ApplicationsModule,
-    ProjectsModule,
-    NotificationsModule,
-    DevicesModule,
-    MessagesModule,
+    AppModule,
+    AuthModule,
     ChannelsModule,
+    DevicesModule,
+    MailModule,
+    MessagesModule,
+    ProjectsModule,
+    UsersModule,
     ],
   controllers: [],
   providers: [],

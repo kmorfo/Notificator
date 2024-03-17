@@ -7,10 +7,10 @@ import { Application } from './entities/application.entity';
 import { ApplicationsService } from './applications.service';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { CreateApplicationDto } from './dto/create-application.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto'; 
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { ValidRoles } from 'src/auth/interfaces';
 import { User } from 'src/users/entities/user.entity';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { ValidRoles } from 'src/auth/interfaces';
 
 @ApiTags('Applications')
 @Controller('applications')

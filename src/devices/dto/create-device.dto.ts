@@ -38,10 +38,4 @@ export class CreateDeviceDto {
     })
     applicationId: string;
 
-    @ApiProperty({
-        description: 'Indicates if the device is active in the system'
-    })
-    @IsBoolean()
-    isActive: boolean;
-
 }

@@ -30,13 +30,13 @@ export class Device {
     @Column('text')
     sha: string;
 
-    @ApiProperty({
-        description: 'ApplicationId',
-        example: 'com.example.appname',
-        minLength: 2
-    })
-    @Column('text')
-    applicationId: string;
+    // @ApiProperty({
+    //     description: 'ApplicationId',
+    //     example: 'com.example.appname',
+    //     minLength: 2
+    // })
+    // @Column('text')
+    // applicationId: string;
 
     @ApiProperty({
         description: 'Indicates if the device is active in the system'

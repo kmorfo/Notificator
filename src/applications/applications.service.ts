@@ -65,7 +65,15 @@ export class ApplicationsService {
     else
       application = await this.applicationsRepository.findOne({ where: { name: term, users: user } })
 
-    if (!application) throw new NotFoundException(`Project with ${term} not found`);
+    if (!application) throw new NotFoundException(`Application with ${term} not found`);
+    return application;
+  }
+
+  async findOneByAppId(applicationId: string): Promise<Application | undefined> {
+    let application: Application = await this.applicationsRepository
+      .findOne({ where: { applicationId: applicationId, isActive: true } })
+
+    if (!application) throw new NotFoundException(`Application with ${applicationId} not found`);
     return application;
   }
 
