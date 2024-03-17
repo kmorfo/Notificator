@@ -57,7 +57,7 @@ export class ProjectsController {
     return this.projectsService.findOne(term, user);
   }
 
-  @Patch(':term')
+  @Patch(':id')
   @Auth(ValidRoles.admin)
   @ApiResponse({ status: 200, description: 'Returns project object', type: Project })
   @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -65,11 +65,11 @@ export class ProjectsController {
   @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
   @ApiResponse({ status: 404, description: 'Not Found' })
   update(
-    @Param('term') term: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProjectDto: UpdateProjectDto,
     @GetUser() user: User
   ) {
-    return this.projectsService.update(term, updateProjectDto, user);
+    return this.projectsService.update(id, updateProjectDto, user);
   }
 
   @Delete(':id')

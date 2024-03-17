@@ -46,9 +46,9 @@ export class ProjectsService {
   async findOne(term: string, user: User): Promise<Project | undefined> {
     let project: Project;
     if (isUUID(term))
-      project = await this.projectsRepository.findOne({ where: { id: term, user: user } })
+      project = await this.projectsRepository.findOne({ where: { id: term, isActive: true, user: user } })
     else
-      project = await this.projectsRepository.findOne({ where: { name: term, user: user } })
+      project = await this.projectsRepository.findOne({ where: { name: term, isActive: true, user: user } })
 
     if (!project) throw new NotFoundException(`Project with ${term} not found`);
     return project;
@@ -63,19 +63,19 @@ export class ProjectsService {
     return project.isActive
   }
 
-  async update(term: string, updateProjectDto: UpdateProjectDto, user: User): Promise<Project | undefined> {
-    const project = await this.findOne(term, user);
+  async update(id: string, updateProjectDto: UpdateProjectDto, user: User): Promise<Project | undefined> {
+    const project = await this.findOne(id, user);
 
     try {
       await this.projectsRepository
         .createQueryBuilder()
         .update(project)
         .set({ ...updateProjectDto })
-        .where({ name: term, user: user })
+        .where({ id: id, user: user })
         .execute();
 
       //Returned project with new data     
-      return await this.findOne(term, user);
+      return await this.findOne(id, user);
     } catch (error) {
       this.handleDBExceptions(error);
     }
@@ -83,7 +83,7 @@ export class ProjectsService {
 
 
   async remove(id: string, user: User): Promise<string | undefined> {
-    //I dont delete project, only set isActive to false
+    //I dont delete the project, only set isActive to false
     const project = await this.findOne(id, user);
     project.isActive = false;
     this.projectsRepository.save(project);

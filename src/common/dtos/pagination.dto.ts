@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, Min } from 'class-validator';
+import { IsBoolean, IsOptional, IsPositive, Min } from 'class-validator';
 
 export class PaginationDto {
 
@@ -13,7 +13,7 @@ export class PaginationDto {
     //Transform param to a Number, is similar to enableImplicitConversions:true 
     @Type(() => Number)
     limit?: number;
-    
+
     @ApiProperty({
         default: 0, description: 'How many rows do you skip?'
     })
@@ -21,4 +21,11 @@ export class PaginationDto {
     @Min(0)
     @Type(() => Number)
     offset?: number;
+
+    @ApiProperty({
+        description: 'Filter items by state',
+        default: true
+    })
+    @IsOptional()
+    isActive: boolean;
 }

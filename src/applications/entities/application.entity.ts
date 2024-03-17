@@ -5,6 +5,7 @@ import { Message } from "src/messages/entities/message.entity";
 import { Project } from "src/projects/entities/project.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Type } from 'class-transformer';
 
 @Entity('applications')
 export class Application {
@@ -19,9 +20,10 @@ export class Application {
     @ApiProperty({
         description: 'ApplicationId',
         example: 'com.example.appname',
-        minLength: 2
+        minLength: 2,
+        uniqueItems: true
     })
-    @Column('text')
+    @Column('text', { unique: true })
     applicationId: string;
 
     @ApiProperty({
@@ -29,8 +31,8 @@ export class Application {
         example: 'DA:39:A3:EE:5E:6B:4B:0D:32:55:BF:EF:95:60:18:90:AF:D8:07:09',
         minLength: 2
     })
-    @Column('text')
-    sha: string;
+    @Column('text', { array: true, default: [] })
+    validSHA: string[];
 
     @ApiProperty({
         description: 'Full name of application',

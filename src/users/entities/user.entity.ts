@@ -52,9 +52,9 @@ export class User {
     @OneToMany(
         () => Project,
         (project) => project.user,
-        { onDelete: 'CASCADE' }
+        { onDelete: 'CASCADE', eager: true }
     )
-    projects: Project[]
+    projects?: Project[]
 
     @ManyToMany(() => Application)
     @JoinTable()

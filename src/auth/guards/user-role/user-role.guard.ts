@@ -21,7 +21,7 @@ export class UserRoleGuard implements CanActivate {
     //Si no se ha establecido el requisito de ningun rol
     if(!validRoles || validRoles.length===0) return true;
 
-    //Obtenemos los datos del usuario
+    //Get userdata
     const req = context.switchToHttp().getRequest();
     const user: User = req.user as User;
 
@@ -34,4 +34,3 @@ export class UserRoleGuard implements CanActivate {
     throw new ForbiddenException(`User ${user.username} need a valid role: [${validRoles}]`)
   }
 }
-//Para crear el guard $nest g gu auth/guards/userRole 

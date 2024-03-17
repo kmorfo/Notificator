@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
+import { IsOptional, IsString, IsUUID, Matches, MaxLength, MinLength } from "class-validator";
 
 export class CreateApplicationDto {
 
@@ -19,8 +19,8 @@ export class CreateApplicationDto {
     applicationId: string;
 
     @ApiProperty({
-        description: 'Full name of user',
-        example: 'Pedro Garcia',
+        description: 'Full name of application',
+        example: 'Example App',
         minLength: 1
     })
     @IsString()
@@ -37,12 +37,12 @@ export class CreateApplicationDto {
         /^[0-9A-Fa-f]{2}(?::[0-9A-Fa-f]{2}){19}$/, {
         message: 'SHA Must be a Valid SHA sign'
     })
-    sha: string;
+    @IsOptional()
+    validSHA: string[];
 
     @ApiProperty({
         description: 'Project UID',
-        example: 'Pedro Garcia',
-        minLength: 1
+        example: '4de45b91-a49d-4670-b3e9-fe8f08af1555'
     })
     @IsUUID()
     projectUID: string;

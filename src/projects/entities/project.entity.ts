@@ -16,9 +16,10 @@ export class Project {
     @ApiProperty({
         description: 'Name of Firebase Project',
         example: 'firebaseProject',
-        minLength: 1
+        minLength: 1,
+        uniqueItems: true
     })
-    @Column('text')
+    @Column('text', { unique: true })
     name: string;
 
     @ApiProperty({
