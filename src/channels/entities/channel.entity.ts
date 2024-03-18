@@ -1,7 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
+
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+
 import { Application } from "src/applications/entities/application.entity";
 import { Device } from "src/devices/entities/device.entity";
-import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('channels')
 export class Channel {

@@ -1,11 +1,9 @@
 import { Injectable, CanActivate, ExecutionContext, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import { Request } from 'express';
 
 import { User } from 'src/users/entities/user.entity';
 import { DevicesService } from '../devices.service';
 import { ApplicationsService } from 'src/applications/applications.service';
-import { Device } from '../entities/device.entity';
 import { Application } from 'src/applications/entities/application.entity';
 
 @Injectable()
@@ -28,7 +26,7 @@ export class SameAppGuard implements CanActivate {
         if (!applicationID || applicationID == undefined)
             throw new NotFoundException(`App ${applicationID} not found.`)
 
-        const app = this.checkUserApp(applicationID, user)
+        await this.checkUserApp(applicationID, user)
 
         return true;
     }
@@ -41,6 +39,5 @@ export class SameAppGuard implements CanActivate {
     async checkUserApp(applicationID: string, user: User): Promise<Application> {
         return await this.applicationsService.checkUserApp(applicationID, user)
     }
-
 
 }

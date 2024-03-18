@@ -1,15 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseUUIDPipe } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-
-import { DevicesService } from './devices.service';
-import { CreateDeviceDto } from './dto/create-device.dto';
-import { UpdateDeviceDto } from './dto/update-device.dto';
-import { Device } from './entities/device.entity';
-import { AppAllowedGuard } from './guards/app-allowed.guard';
-import { Auth, GetUser } from 'src/auth/decorators';
 import { AuthGuard } from '@nestjs/passport';
+
+import { AppAllowedGuard } from './guards/app-allowed.guard';
+import { Auth } from 'src/auth/decorators';
+import { CreateDeviceDto } from './dto/create-device.dto';
+import { Device } from './entities/device.entity';
+import { DevicesService } from './devices.service';
 import { SameAppGuard } from './guards/same-app.guard';
-import { User } from 'src/users/entities/user.entity';
+import { UpdateDeviceDto } from './dto/update-device.dto';
 import { ValidRoles } from 'src/auth/interfaces';
 
 @ApiTags('Devices')
