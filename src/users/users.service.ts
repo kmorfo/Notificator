@@ -54,6 +54,7 @@ export class UsersService {
       throw new InternalServerErrorException('Unexpected error, check server logs');
     }
   }
+
   private async _createUser(createUserDto: CreateUserDto): Promise<User | undefined> {
     const { password, ...userData } = createUserDto;
 

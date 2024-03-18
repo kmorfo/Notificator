@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -77,6 +77,15 @@ export class ApplicationsService {
     return application;
   }
 
+  async checkUserApp(applicationId: string, user: User): Promise<Application | undefined> {
+    let application = await this.applicationsRepository
+      .findOne({ where: { applicationId: applicationId, users: user } })
+
+    if (!application) throw new ForbiddenException(`User cant access to ${applicationId} application`);
+
+    return application;
+  }
+
   async update(id: string, updateApplicationDto: UpdateApplicationDto, user: User): Promise<Application | undefined> {
     const application = await this.findOne(id, user);
 
@@ -97,9 +106,9 @@ export class ApplicationsService {
 
   async remove(id: string, user: User): Promise<string | undefined> {
     //I dont delete the application, only set isActive to false
-    const Application = await this.findOne(id, user);
-    Application.isActive = false;
-    this.applicationsRepository.save(Application);
+    const application = await this.findOne(id, user);
+    application.isActive = false;
+    this.applicationsRepository.save(application);
     return `Application with id ${id} was disabled`;
   }
 

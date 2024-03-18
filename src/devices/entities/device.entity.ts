@@ -51,7 +51,7 @@ export class Device {
     @ManyToOne(
         () => Application,
         (application) => application.devices,
-        { onDelete: 'CASCADE' }
+        { onDelete: 'CASCADE',eager:true }
     )
     application: Application
 
