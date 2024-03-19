@@ -5,24 +5,33 @@ import { User } from 'src/users/entities/user.entity';
 
 import { ApplicationsService } from 'src/applications/applications.service';
 import { Application } from 'src/applications/entities/application.entity';
-import { ChannelsService } from '../channels.service';
 
 @Injectable()
 export class SameAppUserGuard implements CanActivate {
     constructor(
-        private readonly applicationsService: ApplicationsService,
-        private readonly channelService: ChannelsService,
+        private readonly applicationsService: ApplicationsService
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const req = context.switchToHttp().getRequest<Request>();
         const user = req.user as User;
 
-        // Extract applicationID from request body
-        const applicationID = req.body?.['applicationId']
+
+        const method = req.method;
+        let applicationID: string;
+        
+        // if (method === 'PUT' || method === 'POST' || method === 'DELETE'|| method === 'PATH')
+        if (method == 'GET')
+            applicationID = req.params.term
+        else
+            applicationID = req.body?.['applicationId'];
+
+
+        if (applicationID == undefined)
+            throw new NotFoundException(`Application with UID ${applicationID} not found.`)
 
         await this.checkUserApp(applicationID, user)
-    
+
         return true;
     }
     // Method to retrieve application based on applicationId and user

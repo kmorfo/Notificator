@@ -23,6 +23,12 @@ export class Channel {
     @Column('text')
     name: string;
 
+    @ApiProperty({
+        description: 'Indicates if the channel is active in the application'
+    })
+    @Column('bool', { default: true })
+    isActive: boolean;
+
     @ManyToOne(
         () => Application,
         (application) => application.channels,
