@@ -56,9 +56,13 @@ export class Application {
     )
     channels?: Channel[]
 
-    @ManyToMany(() => Message)
-    @JoinTable()
+    @OneToMany(
+        () => Message,
+        (messages) => messages.application,
+        { onDelete: 'CASCADE' }
+    )
     messages?: Message[]
+
 
     @ManyToOne(
         () => Project,

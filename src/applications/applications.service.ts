@@ -1,15 +1,18 @@
-import { BadRequestException, ForbiddenException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { isUUID } from 'class-validator';
 
 import { Application } from './entities/application.entity';
+import { ChannelsService } from 'src/channels/channels.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
-import { UpdateApplicationDto } from './dto/update-application.dto';
-import { User } from 'src/users/entities/user.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { ProjectsService } from 'src/projects/projects.service';
+import { UpdateApplicationDto } from './dto/update-application.dto';
+import { User } from 'src/users/entities/user.entity';
+import { CreateChannelDto } from 'src/channels/dto/create-channel.dto';
+import { Channel } from 'src/channels/entities/channel.entity';
 
 @Injectable()
 export class ApplicationsService {
@@ -18,7 +21,9 @@ export class ApplicationsService {
   constructor(
     @InjectRepository(Application)
     private readonly applicationsRepository: Repository<Application>,
-    private readonly projectService: ProjectsService
+    private readonly projectService: ProjectsService,
+    @Inject(forwardRef(() => ChannelsService))
+    private readonly channelsService: ChannelsService
   ) { }
 
   async create(createApplicationDto: CreateApplicationDto, user: User): Promise<Application | undefined> {
@@ -34,6 +39,12 @@ export class ApplicationsService {
       application.project = project;
 
       application = await this.applicationsRepository.save(application);
+
+      //creates default channel
+      const createChannelDTO = new CreateChannelDto()
+      createChannelDTO.applicationId = application.applicationId
+      createChannelDTO.name = "default"
+      await this.channelsService.create(createChannelDTO)
 
       application.users = []
 

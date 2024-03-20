@@ -7,7 +7,7 @@ import { Channel } from './entities/channel.entity';
 import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { NotAnotherChannelGuard } from 'src/applications/guards/not-another-channel.guard';
-import { SameAppUserGuard } from './guards/same-app-user.guard';
+import { SameAppUserGuard } from '../common/guards/same-app-user.guard';
 import { UpdateChannelDto } from './dto/update-channel.dto';
 import { ValidRoles } from 'src/auth/interfaces';
 
@@ -24,7 +24,7 @@ export class ChannelsController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized, Token not valid' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
-  @ApiResponse({ status: 404, description: 'Not Found. Channel not found.' })
+  @ApiResponse({ status: 404, description: 'Not Found. Application not found.' })
   create(
     @Body() createChannelDto: CreateChannelDto
   ) {

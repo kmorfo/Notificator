@@ -1,6 +1,7 @@
 
 import { ApiProperty } from "@nestjs/swagger";
 import { Application } from "src/applications/entities/application.entity";
+import { Message } from "src/messages/entities/message.entity";
 import { Project } from "src/projects/entities/project.entity";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -55,6 +56,13 @@ export class User {
         { onDelete: 'CASCADE', eager: true }
     )
     projects?: Project[]
+
+    @OneToMany(
+        () => Message,
+        (message) => message.user,
+        { onDelete: 'CASCADE' }
+    )
+    messages?: Message[]
 
     @ManyToMany(() => Application)
     @JoinTable()

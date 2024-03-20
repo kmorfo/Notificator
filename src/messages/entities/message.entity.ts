@@ -1,7 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Application } from "src/applications/entities/application.entity";
+import { Channel } from "src/channels/entities/channel.entity";
 import { Device } from "src/devices/entities/device.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/users/entities/user.entity";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('messages')
 export class Message {
@@ -19,19 +21,39 @@ export class Message {
         minLength: 1
     })
     @Column('text')
-    name: string;
+    title: string;
 
     @ApiProperty({
         description: 'Body for the message',
         example: 'This is the body',
         minLength: 1
     })
-    @Column( 'text')
+    @Column('text')
     body: string;
 
     @ManyToMany(() => Device)
     devices?: Device[]
 
-    @ManyToMany(() => Application)
-    applications?: Application[]
+    @ManyToOne(
+        () => Application,
+        (application) => application.messages,
+        { onDelete: 'CASCADE' }
+    )
+    application: Application
+
+    @ManyToOne(
+        () => Channel,
+        (channel) => channel.messages,
+        { onDelete: 'CASCADE' }
+    )
+    channel: Channel
+
+    @ManyToOne(
+        () => User,
+        (user) => user.messages,
+        { onDelete: 'CASCADE' }
+    )
+    user: User
+
+
 }

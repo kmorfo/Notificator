@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -7,8 +7,7 @@ import { ApplicationsService } from 'src/applications/applications.service';
 import { Channel } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { User } from 'src/users/entities/user.entity';
-import { Application } from 'src/applications/entities/application.entity';
+
 
 @Injectable()
 export class ChannelsService {
@@ -17,6 +16,7 @@ export class ChannelsService {
   constructor(
     @InjectRepository(Channel)
     private readonly channelsRepository: Repository<Channel>,
+    @Inject(forwardRef(() => ApplicationsService))
     private readonly applicationsService: ApplicationsService
   ) { }
 
@@ -53,7 +53,8 @@ export class ChannelsService {
       .getMany();
   }
 
-  async findOneByNameApp(name: string, applicationID: string): Promise<Channel | undefined> {
+  async findOneByNameApp(name = "default", applicationID: string): Promise<Channel | undefined> {
+
     const channel = await this.channelsRepository
       .createQueryBuilder('channel')
       .innerJoinAndSelect('channel.application', 'application')
@@ -64,7 +65,7 @@ export class ChannelsService {
     return channel;
   }
 
-  async _findOne(id: string,): Promise<Channel | undefined> {
+  async findOne(id: string): Promise<Channel | undefined> {
     const channel = await this.channelsRepository.findOne({ where: { id: id } })
 
     if (!channel)
@@ -75,7 +76,7 @@ export class ChannelsService {
 
 
   async update(id: string, updateChannelDto: UpdateChannelDto): Promise<Channel | undefined> {
-    const channel = await this._findOne(id);
+    const channel = await this.findOne(id);
 
     if (!updateChannelDto.name || updateChannelDto.name != undefined) {
       const otherChannel = await this.findOneByNameApp(updateChannelDto.name, updateChannelDto.applicationId)
@@ -93,7 +94,7 @@ export class ChannelsService {
   }
 
   async remove(id: string): Promise<string | undefined> {
-    const channel = await this._findOne(id)
+    const channel = await this.findOne(id)
 
     channel.isActive = false;
     this.channelsRepository.save(channel)
