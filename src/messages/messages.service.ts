@@ -1,13 +1,13 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ApplicationsService } from 'src/applications/applications.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { Message } from './entities/message.entity';
-import { UpdateMessageDto } from './dto/update-message.dto';
-import { User } from 'src/users/entities/user.entity';
 import { ChannelsService } from 'src/channels/channels.service';
+import { CreateMessageDto } from './dto/create-message.dto';
+import { FilterMessageDto } from './dto/filter-message.dto';
+import { Message } from './entities/message.entity';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class MessagesService {
@@ -16,10 +16,8 @@ export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private readonly messagesRepository: Repository<Message>,
-    private readonly aplicationsService: ApplicationsService,
     private readonly channelsService: ChannelsService
   ) { }
-
 
   async create(createMessageDto: CreateMessageDto, user: User): Promise<Message | undefined> {
     try {
@@ -43,21 +41,32 @@ export class MessagesService {
     }
   }
 
-  findAll() {
-    return `This action returns all messages`;
+
+  async findOne(filterMessageDto: FilterMessageDto): Promise<Message[]> {
+    const date = new Date();
+    const {
+      applicationId,
+      channel = "default",
+      from = new Date(date.getFullYear(), date.getMonth(), 1),
+      to = date
+    } = filterMessageDto;
+
+    const messages = await this.messagesRepository
+      .createQueryBuilder('messages')
+      .innerJoin('messages.application', 'application')
+      .innerJoin('messages.channel', 'channel')
+      .where('application.applicationId = :applicationId', { applicationId: applicationId })
+      .andWhere('channel.name = :channel', { channel })
+      .andWhere('messages.created_at >= :from', { from })
+      .andWhere('messages.created_at <= :to', { to })
+      .getMany()
+
+    if (messages.length == 0)
+      throw new NotFoundException(`No messages found with these params.`);
+
+    return messages
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} message`;
-  }
-
-  update(id: number, updateMessageDto: UpdateMessageDto) {
-    return `This action updates a #${id} message`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} message`;
-  }
 
   private handleDBExceptions(error: any): never {
     console.log(error);

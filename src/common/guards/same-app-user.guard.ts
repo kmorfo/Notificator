@@ -18,11 +18,11 @@ export class SameAppUserGuard implements CanActivate {
 
 
         const method = req.method;
-        let applicationID: string;
-        
-        // if (method === 'PUT' || method === 'POST' || method === 'DELETE'|| method === 'PATH')
+        let applicationID
+
         if (method == 'GET')
-            applicationID = req.params.term
+            applicationID = (req.params.term != undefined) ? req.params.term : req.query.applicationId
+
         else
             applicationID = req.body?.['applicationId'];
 

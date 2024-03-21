@@ -1,14 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
-import { MessagesService } from './messages.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { UpdateMessageDto } from './dto/update-message.dto';
-import { Message } from './entities/message.entity';
-import { SameAppUserGuard } from 'src/common/guards/same-app-user.guard';
 import { Auth, GetUser } from 'src/auth/decorators';
+import { CreateMessageDto } from './dto/create-message.dto';
+import { Message } from './entities/message.entity';
+import { MessagesService } from './messages.service';
+import { SameAppUserGuard } from 'src/common/guards/same-app-user.guard';
 import { User } from 'src/users/entities/user.entity';
+import { FilterMessageDto } from './dto/filter-message.dto';
 
 @ApiTags('Messages')
 @Controller('messages')
@@ -26,27 +26,18 @@ export class MessagesController {
   create(
     @Body() createMessageDto: CreateMessageDto,
     @GetUser() user: User
-    ) {
-    return this.messagesService.create(createMessageDto,user);
+  ) {
+    return this.messagesService.create(createMessageDto, user);
   }
 
   @Get()
-  findAll() {
-    return this.messagesService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.messagesService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMessageDto: UpdateMessageDto) {
-    return this.messagesService.update(+id, updateMessageDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.messagesService.remove(+id);
+  @Auth()
+  @UseGuards(AuthGuard(), SameAppUserGuard)
+  @ApiResponse({ status: 200, description: 'Returns array of Messages filtered', type: Array<Message> })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
+  @ApiResponse({ status: 404, description: 'Not Found. No messages found with these params.' })
+  findOne(@Query() filterMessageDto: FilterMessageDto) {
+    return this.messagesService.findOne(filterMessageDto);
   }
 }

@@ -3,7 +3,7 @@ import { Application } from "src/applications/entities/application.entity";
 import { Channel } from "src/channels/entities/channel.entity";
 import { Device } from "src/devices/entities/device.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('messages')
 export class Message {
@@ -30,6 +30,12 @@ export class Message {
     })
     @Column('text')
     body: string;
+
+    @ApiProperty({
+        description: 'Autocreated date'
+    })
+    @CreateDateColumn()
+    created_at: Date;
 
     @ManyToMany(() => Device)
     devices?: Device[]
