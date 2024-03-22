@@ -53,7 +53,7 @@ export class User {
     @OneToMany(
         () => Project,
         (project) => project.user,
-        { onDelete: 'CASCADE', eager: true }
+        { onDelete: 'CASCADE' }
     )
     projects?: Project[]
 

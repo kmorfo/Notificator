@@ -70,12 +70,9 @@ export class ApplicationsService {
   }
 
   async findOne(term: string, user: User): Promise<Application | undefined> {
-    let application: Application;
+    const condition = isUUID(term) ? { id: term, users: user } : { applicationId: term, users: user };
 
-    if (isUUID(term))
-      application = await this.applicationsRepository.findOne({ where: { id: term, users: user } })
-    else
-      application = await this.applicationsRepository.findOne({ where: { name: term, users: user } })
+    let application: Application = await this.applicationsRepository.findOne({ where: condition })
 
     if (!application) throw new NotFoundException(`Application with ${term} not found`);
     return application;

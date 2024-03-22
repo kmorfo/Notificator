@@ -46,11 +46,8 @@ export class ProjectsService {
   }
 
   async findOne(term: string, user: User): Promise<Project | undefined> {
-    let project: Project;
-    if (isUUID(term))
-      project = await this.projectsRepository.findOne({ where: { id: term, isActive: true, user: user } })
-    else
-      project = await this.projectsRepository.findOne({ where: { name: term, isActive: true, user: user } })
+    const condition = isUUID(term) ? { id: term, user: user, isActive: true, } : { name: term, user: user, isActive: true, };
+    const project: Project = await this.projectsRepository.findOne({ where: condition })
 
     if (!project) throw new NotFoundException(`Project with ${term} not found`);
     return project;
@@ -82,7 +79,6 @@ export class ProjectsService {
       this.errorHandlingService.handleDBExceptions(error);
     }
   }
-
 
   async remove(id: string, user: User): Promise<string | undefined> {
     //I dont delete the project, only set isActive to false

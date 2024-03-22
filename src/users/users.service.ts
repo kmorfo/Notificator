@@ -42,6 +42,7 @@ export class UsersService {
     user.roles = roles;
     this.userRepository.save(user);
   }
+  
   async updateUserPassword(id: string, resetPasswordDto: ResetPasswordDto): Promise<User | undefined> {
     try {
       const user = await this.findOneById(id);

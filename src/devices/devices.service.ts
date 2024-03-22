@@ -1,4 +1,4 @@
-import {  Injectable,  Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -37,12 +37,13 @@ export class DevicesService {
   }
 
   async findOne(term: string) {
-    let device: Device;
+    const condition = isUUID(term) ? { id: term } : { token: term };
 
-    if (isUUID(term))
-      device = await this.deviceRepository.findOne({ where: { id: term } })
-    else
-      device = await this.deviceRepository.findOne({ where: { token: term } })
+    let device: Device = await this.deviceRepository.findOne({
+      where: condition,
+      relations: { application: true },
+      select: { application: { applicationId: true } }
+    })
 
     if (!device) throw new NotFoundException(`Application with ${term} not found`);
 

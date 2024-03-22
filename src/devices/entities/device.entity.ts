@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+
 import { Application } from "src/applications/entities/application.entity";
 import { Channel } from "src/channels/entities/channel.entity";
 import { Message } from "src/messages/entities/message.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('devices')
 export class Device {
@@ -30,14 +31,6 @@ export class Device {
     @Column('text')
     sha: string;
 
-    // @ApiProperty({
-    //     description: 'ApplicationId',
-    //     example: 'com.example.appname',
-    //     minLength: 2
-    // })
-    // @Column('text')
-    // applicationId: string;
-
     @ApiProperty({
         description: 'Indicates if the device is active in the system'
     })
@@ -51,7 +44,7 @@ export class Device {
     @ManyToOne(
         () => Application,
         (application) => application.devices,
-        { onDelete: 'CASCADE',eager:true }
+        { onDelete: 'CASCADE'}
     )
     application: Application
 
