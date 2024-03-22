@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { CreateUserDto, ResetPasswordDto } from 'src/auth/dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 
 @Injectable()
 export class UsersService {
@@ -14,7 +15,8 @@ export class UsersService {
 
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    private readonly errorHandlingService: ErrorHandlingService,
   ) { }
 
   async findAll(): Promise<User[]> {

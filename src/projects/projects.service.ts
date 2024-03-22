@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -9,6 +9,7 @@ import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { Project } from './entities/project.entity';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { User } from 'src/users/entities/user.entity';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 
 @Injectable()
 export class ProjectsService {
@@ -16,7 +17,8 @@ export class ProjectsService {
 
   constructor(
     @InjectRepository(Project)
-    private readonly projectsRepository: Repository<Project>
+    private readonly projectsRepository: Repository<Project>,
+    private readonly errorHandlingService: ErrorHandlingService,
   ) { }
 
   async create(createProjectDto: CreateProjectDto, user: User): Promise<Project | undefined> {
@@ -25,7 +27,7 @@ export class ProjectsService {
       project.user = user
       return this.projectsRepository.save(project);
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -39,7 +41,7 @@ export class ProjectsService {
         skip: offset,
       })
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -77,7 +79,7 @@ export class ProjectsService {
       //Returned project with new data     
       return await this.findOne(id, user);
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -88,12 +90,5 @@ export class ProjectsService {
     project.isActive = false;
     this.projectsRepository.save(project);
     return `Project with id ${id} was disabled`;
-  }
-
-  private handleDBExceptions(error: any): never {
-    console.log(error);
-    this.logger.error(error);
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    throw new InternalServerErrorException('Unexpected error, check server logs');
   }
 }

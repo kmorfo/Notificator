@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {  Injectable,  Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -6,9 +6,9 @@ import { Repository } from 'typeorm';
 import { ApplicationsService } from 'src/applications/applications.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { Device } from './entities/device.entity';
-import { UpdateDeviceDto } from './dto/update-device.dto';
-import { User } from 'src/users/entities/user.entity';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 import { isUUID } from 'class-validator';
+import { UpdateDeviceDto } from './dto/update-device.dto';
 
 @Injectable()
 export class DevicesService {
@@ -17,7 +17,8 @@ export class DevicesService {
   constructor(
     @InjectRepository(Device)
     private readonly deviceRepository: Repository<Device>,
-    private readonly applicationsService: ApplicationsService
+    private readonly applicationsService: ApplicationsService,
+    private readonly errorHandlingService: ErrorHandlingService,
   ) { }
 
   async create(createDeviceDto: CreateDeviceDto): Promise<Device | undefined> {
@@ -31,13 +32,9 @@ export class DevicesService {
 
       return device;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
-
-  // findAll() {
-  //   return `This action returns all devices`;
-  // }
 
   async findOne(term: string) {
     let device: Device;
@@ -77,7 +74,7 @@ export class DevicesService {
       updatedDevice.application = null
       return updatedDevice;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -87,12 +84,5 @@ export class DevicesService {
     device.isActive = false;
     this.deviceRepository.save(device);
     return `Device with id ${id} was disabled`;
-  }
-
-  private handleDBExceptions(error: any): never {
-    console.log(error);
-    this.logger.error(error);
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    throw new InternalServerErrorException('Unexpected error, check server logs');
   }
 }

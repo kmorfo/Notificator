@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, forwardRef } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -12,7 +12,7 @@ import { ProjectsService } from 'src/projects/projects.service';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { User } from 'src/users/entities/user.entity';
 import { CreateChannelDto } from 'src/channels/dto/create-channel.dto';
-import { Channel } from 'src/channels/entities/channel.entity';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 
 @Injectable()
 export class ApplicationsService {
@@ -22,6 +22,7 @@ export class ApplicationsService {
     @InjectRepository(Application)
     private readonly applicationsRepository: Repository<Application>,
     private readonly projectService: ProjectsService,
+    private readonly errorHandlingService: ErrorHandlingService,
     @Inject(forwardRef(() => ChannelsService))
     private readonly channelsService: ChannelsService
   ) { }
@@ -50,7 +51,7 @@ export class ApplicationsService {
 
       return application;
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -64,7 +65,7 @@ export class ApplicationsService {
         skip: offset
       })
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -111,7 +112,7 @@ export class ApplicationsService {
       //Returned application with new data     
       return await this.findOne(id, user);
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -123,10 +124,4 @@ export class ApplicationsService {
     return `Application with id ${id} was disabled`;
   }
 
-  private handleDBExceptions(error: any): never {
-    console.log(error);
-    this.logger.error(error);
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    throw new InternalServerErrorException('Unexpected error, check server logs');
-  }
 }

@@ -1,10 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { ApplicationsService } from 'src/applications/applications.service';
 import { ChannelsService } from 'src/channels/channels.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 import { FilterMessageDto } from './dto/filter-message.dto';
 import { Message } from './entities/message.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -16,7 +16,8 @@ export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private readonly messagesRepository: Repository<Message>,
-    private readonly channelsService: ChannelsService
+    private readonly channelsService: ChannelsService,
+    private readonly errorHandlingService: ErrorHandlingService,
   ) { }
 
   async create(createMessageDto: CreateMessageDto, user: User): Promise<Message | undefined> {
@@ -37,10 +38,9 @@ export class MessagesService {
 
       return message
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
-
 
   async findOne(filterMessageDto: FilterMessageDto): Promise<Message[]> {
     const date = new Date();
@@ -65,13 +65,5 @@ export class MessagesService {
       throw new NotFoundException(`No messages found with these params.`);
 
     return messages
-  }
-
-
-  private handleDBExceptions(error: any): never {
-    console.log(error);
-    this.logger.error(error);
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    throw new InternalServerErrorException('Unexpected error, check server logs');
   }
 }

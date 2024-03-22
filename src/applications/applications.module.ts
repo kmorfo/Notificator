@@ -8,6 +8,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { ProjectsModule } from 'src/projects/projects.module';
 import { UsersModule } from 'src/users/users.module';
 import { ChannelsModule } from 'src/channels/channels.module';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   controllers: [ApplicationsController],
@@ -16,6 +17,7 @@ import { ChannelsModule } from 'src/channels/channels.module';
     TypeOrmModule.forFeature([Application]),
     forwardRef(() => ChannelsModule),
     AuthModule,
+    CommonModule,
     ProjectsModule,
     UsersModule,
   ],

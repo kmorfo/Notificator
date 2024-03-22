@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 
 import * as bcrypt from 'bcrypt';
 
 import { CreateUserDto, LoginUserDto, ResetPasswordDto } from './dto';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 import { JwtPayload } from './interfaces';
 import { MailService } from 'src/mail/mail.service';
 import { User } from 'src/users/entities/user.entity';
@@ -16,7 +17,8 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
+    private readonly errorHandlingService: ErrorHandlingService,
   ) { }
 
   async create(createUserDto: CreateUserDto) {
@@ -27,7 +29,7 @@ export class AuthService {
 
       return { ...user, token: this.getJwToken({ id: user.id }) };
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error)
     }
   }
 
@@ -83,11 +85,4 @@ export class AuthService {
     return this.jwtService.sign(payload, options);
   }
 
-
-  private handleDBExceptions(error: any): never {
-    console.log(error);
-    this.logger.error(error);
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    throw new InternalServerErrorException('Unexpected error, check server logs');
-  }
 }

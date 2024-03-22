@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseUUID
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
-import { Auth, GetUser } from 'src/auth/decorators';
+import { Auth } from 'src/auth/decorators';
 import { Channel } from './entities/channel.entity';
 import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
@@ -30,11 +30,6 @@ export class ChannelsController {
   ) {
     return this.channelsService.create(createChannelDto);
   }
-
-  // @Get()
-  // findAll() {
-  //   return this.channelsService.findAll();
-  // }
 
   @Get(':term')
   @Auth(ValidRoles.admin)

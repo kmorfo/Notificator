@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, InternalServerErrorException, Logger, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { ApplicationsService } from 'src/applications/applications.service';
 import { Channel } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 
 
 @Injectable()
@@ -16,6 +17,7 @@ export class ChannelsService {
   constructor(
     @InjectRepository(Channel)
     private readonly channelsRepository: Repository<Channel>,
+    private readonly errorHandlingService: ErrorHandlingService,
     @Inject(forwardRef(() => ApplicationsService))
     private readonly applicationsService: ApplicationsService
   ) { }
@@ -35,13 +37,9 @@ export class ChannelsService {
         application: applicationId
       };
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
-
-  // findAll() {
-  //   return `This action returns all channels`;
-  // }
 
   async findAllChannelsOfApp(term: string): Promise<Channel[]> {
     return await this.channelsRepository
@@ -89,7 +87,7 @@ export class ChannelsService {
 
       return await this.channelsRepository.save(channelUpdated);
     } catch (error) {
-      this.handleDBExceptions(error);
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -100,12 +98,5 @@ export class ChannelsService {
     this.channelsRepository.save(channel)
 
     return `Channel with id ${id} was disabled`;
-  }
-
-  private handleDBExceptions(error: any): never {
-    console.log(error);
-    this.logger.error(error);
-    if (error.code === '23505') throw new BadRequestException(error.detail);
-    throw new InternalServerErrorException('Unexpected error, check server logs');
   }
 }
