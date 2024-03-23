@@ -5,7 +5,7 @@
 # I'm working in this project, it doesn't send notifications yet
 
 ## Description
- Notificator is a backend that allows us managed all our Firebase Cloud Messaging in one app.
+Notificator is a backend that allows us managed all our Firebase Cloud Messaging in one app.
 
 Includes the following features:
 * Swagger OpenAPI
@@ -56,3 +56,5 @@ $ yarn run test:cov
 [Implement in-app notifications with NestJS, MySQL, and Firebase](https://blog.logrocket.com/implement-in-app-notifications-nestjs-mysql-firebase)
 
 [TypeORM Docs](https://orkhan.gitbook.io/typeorm/docs)
+
+[https://docs.nestjs.com/techniques/file-upload](Nestjs File upload Docs)

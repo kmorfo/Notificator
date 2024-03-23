@@ -11,7 +11,6 @@ import { MessagesModule } from './messages/messages.module';
 import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
 
-
 @Module({
   imports: [ConfigModule.forRoot(),
     TypeOrmModule.forRoot({

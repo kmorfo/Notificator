@@ -1,6 +1,6 @@
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseUUIDPipe, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 
 import { Auth, GetUser } from 'src/auth/decorators';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -11,6 +11,8 @@ import { ProjectsService } from './projects.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { User } from 'src/users/entities/user.entity';
 import { ValidRoles } from 'src/auth/interfaces';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @ApiTags('Projects')
 @Controller('projects')
@@ -29,6 +31,29 @@ export class ProjectsController {
     @GetUser() user: User
   ) {
     return this.projectsService.create(createProjectDto, user);
+  }
+
+  @Post('keyfile')
+  @Auth(ValidRoles.admin)
+  @ApiResponse({ status: 201, description: 'KeyFile uploaded', type: String })
+  @ApiResponse({ status: 400, description: 'Bad request | File is required.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized, Token not valid' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({ destination: './static/projects' })
+  }))
+  uploadProjectPrivateKey(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 100000 }),//bytes
+          new FileTypeValidator({ fileType: '.(txt|json)' }),
+        ]
+      })
+    ) file: Express.Multer.File,
+    @GetUser() user: User
+  ) {
+    this.projectsService.uploadKeyFile(file.filename, user)
   }
 
   @Get()

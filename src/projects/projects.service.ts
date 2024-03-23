@@ -4,12 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { isUUID } from 'class-validator';
 
+import * as fs from 'fs';
+
 import { CreateProjectDto } from './dto/create-project.dto';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { Project } from './entities/project.entity';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { User } from 'src/users/entities/user.entity';
-import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 
 @Injectable()
 export class ProjectsService {
@@ -26,6 +28,25 @@ export class ProjectsService {
       const project = await this.projectsRepository.create(createProjectDto);
       project.user = user
       return this.projectsRepository.save(project);
+    } catch (error) {
+      this.errorHandlingService.handleDBExceptions(error);
+    }
+  }
+
+  async uploadKeyFile(file: string, user: User): Promise<string | undefined> {
+    const project = await this.findOneByUser(user);
+    if (!project) throw new NotFoundException(`User ${user.username} doesn't have any project registered`);
+
+    try {
+      //delete previous keyfile
+      if (project.secretkeyfile != "")
+        fs.unlinkSync(`./static/projects/${project.secretkeyfile}`)
+
+      project.secretkeyfile = file
+
+      this.projectsRepository.save(project)
+
+      return "Secret Key File uploaded";
     } catch (error) {
       this.errorHandlingService.handleDBExceptions(error);
     }
@@ -55,6 +76,10 @@ export class ProjectsService {
 
   async findOneByName(name: string): Promise<Project | undefined> {
     return await this.projectsRepository.findOne({ where: { name } });
+  }
+
+  async findOneByUser(user: User): Promise<Project | undefined> {
+    return await this.projectsRepository.findOne({ where: { user: user } });
   }
 
   async checkIfProjectIsActive(term: string, user: User): Promise<boolean | undefined> {

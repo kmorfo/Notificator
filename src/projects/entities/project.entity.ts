@@ -23,6 +23,12 @@ export class Project {
     name: string;
 
     @ApiProperty({
+        description: 'Firebase secret key file'
+    })
+    @Column('text', { default: "" })
+    secretkeyfile: string;
+
+    @ApiProperty({
         description: 'Indicates if the project is active in the system'
     })
     @Column('bool', { default: true })
