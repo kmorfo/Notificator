@@ -8,6 +8,7 @@ import { DevicesController } from './devices.controller';
 import { DevicesService } from './devices.service';
 import { UsersModule } from 'src/users/users.module';
 import { CommonModule } from 'src/common/common.module';
+import { ChannelsModule } from 'src/channels/channels.module';
 
 @Module({
   controllers: [DevicesController],
@@ -16,6 +17,7 @@ import { CommonModule } from 'src/common/common.module';
     TypeOrmModule.forFeature([Device]),
     ApplicationsModule,
     AuthModule,
+    ChannelsModule,
     CommonModule,
     UsersModule
   ],

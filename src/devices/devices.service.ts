@@ -9,6 +9,7 @@ import { Device } from './entities/device.entity';
 import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 import { isUUID } from 'class-validator';
 import { UpdateDeviceDto } from './dto/update-device.dto';
+import { ChannelsService } from 'src/channels/channels.service';
 
 @Injectable()
 export class DevicesService {
@@ -18,16 +19,22 @@ export class DevicesService {
     @InjectRepository(Device)
     private readonly deviceRepository: Repository<Device>,
     private readonly applicationsService: ApplicationsService,
+    private readonly channelsService: ChannelsService,
     private readonly errorHandlingService: ErrorHandlingService,
   ) { }
 
   async create(createDeviceDto: CreateDeviceDto): Promise<Device | undefined> {
     try {
       const application = await this.applicationsService.findOneByAppId(createDeviceDto.applicationId);
+      const defaultChannel = await this.channelsService.findOneByNameApp("default", createDeviceDto.applicationId);
+
       let device = await this.deviceRepository.create(createDeviceDto);
 
+      device.channels = [defaultChannel];
       device.application = application;
       device = await this.deviceRepository.save(device);
+
+      device.channels = []
       device.application = null
 
       return device;

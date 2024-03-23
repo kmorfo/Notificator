@@ -26,6 +26,9 @@ Includes the following features:
 ```
 docker-compose up -d
 ``` 
+6. Obtain a Firebase private key file 
+   Intro Firebase settings project go to service account, click in Generate new private key 
+   
 ## Running the app
 
 ```bash
@@ -58,3 +61,4 @@ $ yarn run test:cov
 [TypeORM Docs](https://orkhan.gitbook.io/typeorm/docs)
 
 [https://docs.nestjs.com/techniques/file-upload](Nestjs File upload Docs)
+
