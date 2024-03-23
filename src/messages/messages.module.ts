@@ -9,6 +9,7 @@ import { MessagesService } from './messages.service';
 import { UsersModule } from 'src/users/users.module';
 import { ChannelsModule } from 'src/channels/channels.module';
 import { CommonModule } from 'src/common/common.module';
+import { ProjectsModule } from 'src/projects/projects.module';
 
 @Module({
   controllers: [MessagesController],
@@ -19,6 +20,7 @@ import { CommonModule } from 'src/common/common.module';
     AuthModule,
     ChannelsModule,
     CommonModule,
+    ProjectsModule,
     UsersModule
   ],
   exports: [MessagesModule, MessagesService]

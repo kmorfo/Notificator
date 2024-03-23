@@ -38,6 +38,6 @@ export class MessagesController {
   @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
   @ApiResponse({ status: 404, description: 'Not Found. No messages found with these params.' })
   findOne(@Query() filterMessageDto: FilterMessageDto) {
-    return this.messagesService.findOne(filterMessageDto);
+    return this.messagesService.findBy(filterMessageDto);
   }
 }
