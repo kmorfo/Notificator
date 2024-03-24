@@ -7,12 +7,14 @@ import { isUUID } from 'class-validator';
 import { Application } from './entities/application.entity';
 import { ChannelsService } from 'src/channels/channels.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
+import { CreateAppUserDto } from './dto/create-app-user.dto';
+import { CreateChannelDto } from 'src/channels/dto/create-channel.dto';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { ProjectsService } from 'src/projects/projects.service';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { User } from 'src/users/entities/user.entity';
-import { CreateChannelDto } from 'src/channels/dto/create-channel.dto';
-import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ApplicationsService {
@@ -23,6 +25,7 @@ export class ApplicationsService {
     private readonly applicationsRepository: Repository<Application>,
     private readonly projectService: ProjectsService,
     private readonly errorHandlingService: ErrorHandlingService,
+    private readonly usersService: UsersService,
     @Inject(forwardRef(() => ChannelsService))
     private readonly channelsService: ChannelsService
   ) { }
@@ -78,9 +81,9 @@ export class ApplicationsService {
     return application;
   }
 
-  async findOneByAppId(applicationId: string): Promise<Application | undefined> {
+  async findOneByAppId(applicationId: string, relationUser = false): Promise<Application | undefined> {
     let application: Application = await this.applicationsRepository
-      .findOne({ where: { applicationId: applicationId, isActive: true } })
+      .findOne({ where: { applicationId: applicationId, isActive: true }, relations: { users: relationUser } })
 
     if (!application) throw new NotFoundException(`Application with ${applicationId} not found`);
     return application;
@@ -119,6 +122,26 @@ export class ApplicationsService {
     application.isActive = false;
     this.applicationsRepository.save(application);
     return `Application with id ${id} was disabled`;
+  }
+
+  async createAppUser(createAppUserDto: CreateAppUserDto): Promise<User | undefined> {
+    const application = await this.findOneByAppId(createAppUserDto.applicationId, true);
+    const user = await this.usersService.createAppUser(createAppUserDto);
+
+    application.users.push(user)
+    this.applicationsRepository.save(application);
+
+    return user;
+  }
+
+  async findAllUsers(term: string): Promise<Application | undefined> {
+    return await this.findOneByAppId(term, true);
+  }
+
+  async removeUserApp(id: string): Promise<string | undefined> {
+    //I dont delete the application, only set isActive to false
+    await this.usersService.removeUserById(id)
+    return `User with id ${id} was disabled`;
   }
 
 }

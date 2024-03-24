@@ -72,6 +72,6 @@ export class User {
 
     @ManyToMany(() => Application)
     @JoinTable()
-    application?: Application[]
+    applications?: Application[]
 
 }

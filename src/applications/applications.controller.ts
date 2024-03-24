@@ -7,7 +7,8 @@ import { Application } from './entities/application.entity';
 import { ApplicationsService } from './applications.service';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { CreateApplicationDto } from './dto/create-application.dto';
-import { PaginationDto } from 'src/common/dtos/pagination.dto'; 
+import { CreateAppUserDto } from './dto/create-app-user.dto';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
 import { User } from 'src/users/entities/user.entity';
 import { ValidRoles } from 'src/auth/interfaces';
@@ -84,5 +85,42 @@ export class ApplicationsController {
     @GetUser() user: User
   ) {
     return this.applicationsService.remove(id, user);
+  }
+
+  @Post('/registeruser')
+  @Auth(ValidRoles.admin)
+  @UseGuards(AuthGuard(), AdminSameProjectGuard)
+  @ApiResponse({ status: 201, description: 'User was created', type: User })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized, Token not valid' })
+  createUser(
+    @Body() createAppUserDto: CreateAppUserDto
+  ) {
+    return this.applicationsService.createAppUser(createAppUserDto);
+  }
+
+  @Get('/users/:term')
+  @Auth(ValidRoles.admin)
+  @ApiResponse({ status: 200, description: 'Returns an application object with users', type: Application })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
+  @ApiResponse({ status: 404, description: 'Not Found' })
+  findAllUsers(
+    @Param('term') term: string
+  ) {
+    return this.applicationsService.findAllUsers(term);
+  }
+
+  @Delete('/user/:id')
+  @Auth(ValidRoles.admin)
+  @UseGuards(AuthGuard(), AdminSameProjectGuard)
+  @ApiResponse({ status: 201, description: 'User was disabled' })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized, Token not valid' })
+  @ApiResponse({ status: 404, description: 'Not Found' })
+  removeUserApp(
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.applicationsService.removeUserApp(id);
   }
 }

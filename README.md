@@ -11,6 +11,7 @@ Includes the following features:
 * Authentication and authorization, using JWT and roles
 * Separation of the Users and Auth modules
 * Password recovery via email with templates and temporary token
+* Email verification via email with templates and temporary token
 * Each project are multi user with roles
 * Each application can be multi channels with a default channel
 * Send Notification messages

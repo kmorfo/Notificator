@@ -13,7 +13,7 @@ import { UsersController } from './users.controller';
   imports: [
     TypeOrmModule.forFeature([User]),
     forwardRef(() => AuthModule),
-    CommonModule
+    CommonModule,
   ],
   exports: [UsersModule, UsersService]
 })

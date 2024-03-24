@@ -1,9 +1,9 @@
 
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsEmail, IsEnum, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
-import { ValidRoles } from "../interfaces";
+import { ValidRoles } from "src/auth/interfaces";
 
-export class CreateUserDto {
+export class CreateAppUserDto {
 
     @ApiProperty({
         description: 'Registration user email',
@@ -35,6 +35,21 @@ export class CreateUserDto {
     @IsString()
     @MinLength(1)
     username: string;
+
+    @ApiProperty({
+        description: 'ApplicationID must have a valid name',
+        example: 'com.example.appname',
+        minLength: 6,
+        maxLength: 100
+    })
+    @IsString()
+    @MinLength(6)
+    @MaxLength(100)
+    @Matches(
+        /^([a-zA-Z]{2,4})\.[a-zA-Z0-9_]+(?:\.[a-zA-Z0-9_]+)+$/, {
+        message: 'The ApplicationId must have a valid name like: com.example.appname'
+    })
+    applicationId: string;
 
     @ApiProperty({
         description: 'List of user roles',

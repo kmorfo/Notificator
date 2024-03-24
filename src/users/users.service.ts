@@ -4,10 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { User } from './entities/user.entity';
+import { CreateAppUserDto } from 'src/applications/dto/create-app-user.dto';
 import { CreateUserDto, ResetPasswordDto } from 'src/auth/dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { User } from './entities/user.entity';
+
 
 @Injectable()
 export class UsersService {
@@ -16,7 +18,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly errorHandlingService: ErrorHandlingService,
+    private readonly errorHandlingService: ErrorHandlingService
   ) { }
 
   async findAll(): Promise<User[]> {
@@ -100,6 +102,26 @@ export class UsersService {
     } catch (error) {
       this.errorHandlingService.handleDBExceptions(error);
     }
+  }
+
+  async createAppUser(createAppUserDto: CreateAppUserDto): Promise<User | undefined> {
+    try {
+      const { applicationId, ...createUserDTO } = createAppUserDto
+      const user = await this._createUser(createUserDTO);
+
+      return user;
+    } catch (error) {
+      this.errorHandlingService.handleDBExceptions(error)
+    }
+  }
+
+  async removeUserById(id: string): Promise<User | undefined> {
+    const user = await this.findOneById(id);
+    if (!user) throw new NotFoundException(`User with ${id} not found`);
+
+    user.isActive = false;
+    this.userRepository.save(user);
+    return user;
   }
 
 }
