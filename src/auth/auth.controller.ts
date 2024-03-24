@@ -11,24 +11,24 @@ import { User } from 'src/users/entities/user.entity';
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
+  @Post('register')
   @ApiResponse({ status: 201, description: 'Create API account', type: User })
   @ApiResponse({ status: 400, description: 'Invalid parameters' })
-  @Post('register')
   createUser(@Body() createAuthDto: CreateUserDto) {
     return this.authService.create(createAuthDto);
   }
 
+  @Post('login')
   @ApiResponse({ status: 201, description: 'Login API', type: User })
   @ApiResponse({ status: 400, description: 'Invalid parameters' })
   @ApiResponse({ status: 401, description: 'Credentials are nor valid(password)' })
-  @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
   }
 
+  @Get('check-status')
   @ApiResponse({ status: 200, description: 'User is active, renew token', type: User })
   @ApiResponse({ status: 401, description: 'Credentials are nor valid(password)' })
-  @Get('check-status')
   @Auth()
   checkAuthStatus(@GetUser() user: User) {
     return this.authService.checkAuthStatus(user);
@@ -38,7 +38,9 @@ export class AuthController {
   @Get('forgot-password/:email')
   @ApiResponse({ status: 200, description: 'Email send', type: Boolean })
   @ApiResponse({ status: 401, description: 'Email does not exist' })
-  public async sendEmailForgotPassword(@Param('email') email: string) {
+  public async sendEmailForgotPassword(
+    @Param('email') email: string
+    ) {
     return await this.authService.forgotPassword(email);
   }
 
@@ -49,8 +51,25 @@ export class AuthController {
     @Body() resetPasswordDto: ResetPasswordDto,
     @Param('token') token: string
   ) {
-    console.log(token);
     return await this.authService.resetPasswordToken(token, resetPasswordDto);
+  }
+
+  @Get('send-verification/:email')
+  @ApiResponse({ status: 200, description: 'Email send', type: Boolean })
+  @ApiResponse({ status: 401, description: 'Email does not exist' })
+  public async sendValidationEmail(
+    @Param('email') email: string
+    ) {
+    return await this.authService.sendEmailVerification(email);
+  }
+
+  @Get('verify-email/:token')
+  @ApiResponse({ status: 200, description: 'User email validation successfully', type: User })
+  @ApiResponse({ status: 401, description: 'Token is not valid' })
+  public async verifyEmailToken(
+    @Param('token') token: string
+  ) {
+    return await this.authService.verifyEmailToken(token);
   }
 
 }

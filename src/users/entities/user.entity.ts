@@ -45,6 +45,12 @@ export class User {
     })
     @Column('bool', { default: true })
     isActive: boolean;
+    
+    @ApiProperty({
+        description: 'Indicates if the email of the user is verified'
+    })
+    @Column('bool', { default: false })
+    isEmailVerified: boolean;
 
     @ApiProperty({ enum: ['ADMIN', 'USER'] })
     @Column('text', { array: true, default: ['ADMIN'] })

@@ -42,7 +42,7 @@ export class UsersService {
     user.roles = roles;
     this.userRepository.save(user);
   }
-  
+
   async updateUserPassword(id: string, resetPasswordDto: ResetPasswordDto): Promise<User | undefined> {
     try {
       const user = await this.findOneById(id);
@@ -54,7 +54,7 @@ export class UsersService {
       delete user.password;
       return user;
     } catch (error) {
-      throw new InternalServerErrorException('Unexpected error, check server logs');
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 
@@ -71,6 +71,20 @@ export class UsersService {
     return user;
   }
 
+  async setUserEmailVerified(id: string): Promise<User | undefined> {
+    try {
+      const user = await this.findOneById(id);
+      if (!user) throw new NotFoundException(`User not found`);
+      user.isEmailVerified = true;
+
+      await this.userRepository.save(user);
+
+      return user;
+    } catch (error) {
+      this.errorHandlingService.handleDBExceptions(error);
+    }
+  }
+
   async update(updateUserDto: UpdateUserDto, user: User): Promise<User | undefined> {
     try {
       const { email, username, isActive } = updateUserDto;
@@ -84,7 +98,7 @@ export class UsersService {
 
       return userUpdated;
     } catch (error) {
-      throw error;
+      this.errorHandlingService.handleDBExceptions(error);
     }
   }
 

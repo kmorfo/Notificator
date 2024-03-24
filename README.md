@@ -61,7 +61,7 @@ $ yarn run test:cov
 
 [TypeORM Docs](https://orkhan.gitbook.io/typeorm/docs)
 
-[https://docs.nestjs.com/techniques/file-upload](Nestjs File upload Docs)
+[Nestjs File upload Docs](https://docs.nestjs.com/techniques/file-upload)
 
 ### Examples
 **Send message to one token**
