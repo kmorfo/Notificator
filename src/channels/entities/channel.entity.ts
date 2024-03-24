@@ -27,8 +27,8 @@ export class Channel {
     @ApiProperty({
         description: 'Indicates if the channel is active in the application'
     })
-    @Column('bool', { default: true })
-    isActive: boolean;
+    @Column('bool', { nullable: true })
+    isActive?: boolean;
 
     @ManyToOne(
         () => Application,

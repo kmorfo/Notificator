@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsObject, IsOptional, IsString, IsUrl, Matches, MaxLength, MinLength } from "class-validator";
 
 export class CreateMessageDto {
     @ApiProperty({
@@ -19,6 +19,22 @@ export class CreateMessageDto {
     @IsString()
     @MinLength(2)
     body: string;
+
+    @ApiProperty({
+        description: 'Message Image URL ',
+        example: 'https://tuapp.com/image.png'
+    })
+    @IsOptional()
+    @IsUrl()
+    image: string;
+
+    @ApiProperty({
+        description: 'Extra custom data',
+        example: "score: '850' time: '2:45'"
+    })
+    @IsObject()
+    @IsOptional()
+    data: Record<string, any>;
 
     @ApiProperty({
         description: 'ApplicationID must have a valid name',

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -14,22 +14,26 @@ import { User } from 'src/users/entities/user.entity';
 import { ProjectsService } from '../projects/projects.service';
 import { Application } from 'src/applications/entities/application.entity';
 import { ApplicationsService } from '../applications/applications.service';
+import { Channel } from 'src/channels/entities/channel.entity';
+import { DevicesService } from 'src/devices/devices.service';
 
 @Injectable()
 export class MessagesService {
   private readonly logger = new Logger('MessagesService');
+  private firebaseApp: firebase.app.App | null = null;
 
   constructor(
     @InjectRepository(Message)
     private readonly messagesRepository: Repository<Message>,
+    // private readonly applicationsService: ApplicationsService,
     private readonly channelsService: ChannelsService,
-    private readonly applicationsService: ApplicationsService,
-    private readonly projectsService: ProjectsService,
+    private readonly devicesService: DevicesService,
     private readonly errorHandlingService: ErrorHandlingService,
+    private readonly projectsService: ProjectsService,
   ) { }
 
   async create(createMessageDto: CreateMessageDto, user: User): Promise<Message | undefined> {
-    await this.initializeApp(user);
+    await this.initializeFirebaseApp(user);
 
     try {
       const { applicationId, channel, ...messageData } = createMessageDto;
@@ -37,16 +41,18 @@ export class MessagesService {
       let channelMsg = await this.channelsService.findOneByNameApp(channel, applicationId);
       let message = await this.messagesRepository.create(messageData);
 
-      console.log(channelMsg)
-
       message.channel = channelMsg;
       message.application = channelMsg.application;
       message.user = user;
 
       message = await this.messagesRepository.save(message);
-      message.application = null
-      message.channel = null
-      message.user = null
+      const tokens = await this.devicesService.getAllDeviceTokenBy(channelMsg.name, applicationId);
+
+      this.sendMessage(message, tokens);
+
+      message.application = null;
+      message.channel = null;
+      message.user = null;
 
       return message
     } catch (error) {
@@ -54,37 +60,50 @@ export class MessagesService {
     }
   }
 
-  async initializeApp(user: User) {
+  async initializeFirebaseApp(user: User) {
     const project = await this.projectsService.findOneByUser(user);
     if (!project) throw new NotFoundException(`No project found for user ${user.username}.`);
     if (project.secretkeyfile == "") throw new NotFoundException(`Project ${project.name} doesn't have Secret Key File.`);
 
-    await firebase.initializeApp({
-      credential: firebase.credential.cert(`./static/projects/${project.secretkeyfile}`)
-    });
+    if (!this.firebaseApp) {
+      this.firebaseApp = await firebase.initializeApp({
+        credential: firebase.credential.cert(`./static/projects/${project.secretkeyfile}`)
+      });
+    }
 
-    this.logger.log(`Firebase initilized with ./static/projects/${project.secretkeyfile} file`)
+    this.logger.log(`Firebase initilized with ./static/projects/${project.secretkeyfile} file`);
   }
 
-  private async sendMessage(message: Message, application: Application) {
-
-    const registrationTokens = [
-      'fSSzm7MRQcW4BxYDoEd5RH:APA91bFTjWZ0dtIlsYhcYjIYrpcaYfnq-z5UkCUU0R2z8u2PDRUp1r_USoqavofwzs9mEvGuil7oesOpLEZhuPLWTgJrNHwffIxySUQZEx91WsVysBKo6GKmBDViIgoU0kgzAbMcpkyb'
-    ];
-
-    const notification = {
-      title: 'Price drop',
-      body: '5% off all electronics',
-      data: {
-        score: '850', time: '2:45'
-      },
-      tokens: registrationTokens,
+  private async sendMessage(message: Message, tokens: string[]) {
+    //Setting notification with optional params
+    const notificationMessage: firebase.messaging.NotificationMessagePayload = {
+      title: message.title,
+      body: message.body
     };
 
-    await firebase.messaging().sendEachForMulticast(notification)
+    if (message.image) notificationMessage.imageUrl = message.image
 
+    const fireMessage: any = {
+      notification: notificationMessage,
+      topic: message.channel.name,
+      tokens: tokens
+    }
 
+    if (message.data) fireMessage.data = message.data;
 
+    //send notification to all devices of this channel
+    await this.firebaseApp.messaging().sendEachForMulticast(fireMessage)
+      .then((response) => {
+        this.logger.log(`${response.successCount} messages were sent successfully`)
+      }).catch((error) => {
+        this.logger.error(`Error sending message:', ${error}`)
+      });
+
+    //When the message has been sent, the connection firebaseApp is closed
+    if (this.firebaseApp) {
+      await this.firebaseApp.delete();
+      this.firebaseApp = null;
+    }
   }
 
   async findBy(filterMessageDto: FilterMessageDto): Promise<Message[]> {

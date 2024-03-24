@@ -32,6 +32,20 @@ export class Message {
     body: string;
 
     @ApiProperty({
+        description: 'Message Image URL ',
+        example: 'https://tuapp.com/image.png'
+    })
+    @Column('text', { nullable: true })
+    image?: string;
+
+    @ApiProperty({
+        description: 'Extra custom data',
+        example: "score: '850' time: '2:45'"
+    })
+    @Column('json', { nullable: true })
+    data?: Record<string, any>;
+
+    @ApiProperty({
         description: 'Autocreated date'
     })
     @CreateDateColumn()

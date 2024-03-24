@@ -67,6 +67,20 @@ export class DevicesService {
     return device;
   }
 
+  async getAllDeviceTokenBy(channel, applicationId): Promise<string[] | undefined> {
+    const deviceTokens = await this.deviceRepository
+      .createQueryBuilder('devices')
+      .select(['devices.token'])
+      .innerJoin('devices.application', 'application')
+      .innerJoin('devices.channels', 'channel')
+      .where('application.applicationId = :applicationId', { applicationId: applicationId })
+      .andWhere('channel.name = :channel', { channel })
+      .andWhere('devices.isActive = true')
+      .getMany();
+
+    return deviceTokens.map(device => device.token);
+  }
+
   async update(id: string, updateDeviceDto: UpdateDeviceDto): Promise<Device | undefined> {
     const device = await this._findOneById(id);
     try {

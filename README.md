@@ -2,8 +2,6 @@
   <a href="https://rlujancreations.es" target="blank"><img src="./gitImages/rlujanlogo.png" width="300" alt="RLujanCreations Logo" /></a>
 </p>
 
-# I'm working in this project, it doesn't send notifications yet
-
 ## Description
 Notificator is a backend that allows us managed all our Firebase Cloud Messaging in one app.
 
@@ -15,6 +13,9 @@ Includes the following features:
 * Password recovery via email with templates and temporary token
 * Each project are multi user with roles
 * Each application can be multi channels with a default channel
+* Send Notification messages
+  * Optional Image
+  * Optional data in JSON format 
 
 
 # Notifications API
@@ -62,3 +63,23 @@ $ yarn run test:cov
 
 [https://docs.nestjs.com/techniques/file-upload](Nestjs File upload Docs)
 
+### Examples
+**Send message to one token**
+```
+await firebase
+  .messaging()
+  .send({
+    notification: {
+      "title": "title",
+      "body": "body"
+    },
+    token: token,
+    android: { priority: 'normal' },
+  }).then((response) => {
+        console.log(response + ' messages were sent successfully');
+      })
+  .catch((error: any) => {
+    console.error(error);
+  });
+
+```

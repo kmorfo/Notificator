@@ -10,6 +10,7 @@ import { UsersModule } from 'src/users/users.module';
 import { ChannelsModule } from 'src/channels/channels.module';
 import { CommonModule } from 'src/common/common.module';
 import { ProjectsModule } from 'src/projects/projects.module';
+import { DevicesModule } from 'src/devices/devices.module';
 
 @Module({
   controllers: [MessagesController],
@@ -20,6 +21,7 @@ import { ProjectsModule } from 'src/projects/projects.module';
     AuthModule,
     ChannelsModule,
     CommonModule,
+    DevicesModule,
     ProjectsModule,
     UsersModule
   ],
