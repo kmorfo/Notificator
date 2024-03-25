@@ -63,7 +63,7 @@ export class MessagesService {
   async initializeFirebaseApp(user: User) {
     const project = await this.projectsService.findOneByUser(user);
     if (!project) throw new NotFoundException(`No project found for user ${user.username}.`);
-    if (project.secretkeyfile == "") throw new NotFoundException(`Project ${project.name} doesn't have Secret Key File.`);
+    if (project.secretkeyfile == "") throw new NotFoundException(`Project ${project.name} doesn't have a Secret Key File.`);
 
     if (!this.firebaseApp) {
       this.firebaseApp = await firebase.initializeApp({

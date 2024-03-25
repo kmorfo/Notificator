@@ -22,7 +22,7 @@ export class MessagesController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized, Token not valid' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
-  @ApiResponse({ status: 404, description: 'Not Found. Application not found.' })
+  @ApiResponse({ status: 404, description: 'Not Found. Application not found or project doesnt have Secret Key File.' })
   create(
     @Body() createMessageDto: CreateMessageDto,
     @GetUser() user: User

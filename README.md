@@ -10,10 +10,11 @@ Includes the following features:
 * You can register one project per user/email 
 * Authentication and authorization, using JWT and roles
 * Separation of the Users and Auth modules
+  * Administration application users. 
 * Password recovery via email with templates and temporary token
 * Email verification via email with templates and temporary token
 * Each project are multi user with roles
-* Each application can be multi channels with a default channel
+* Each application can have multiple channels with a default channel
 * Send Notification messages
   * Optional Image
   * Optional data in JSON format 
@@ -42,19 +43,6 @@ $ yarn run start:dev
 
 # production mode
 $ yarn run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ yarn run test
-
-# e2e tests
-$ yarn run test:e2e
-
-# test coverage
-$ yarn run test:cov
 ```
 
 ### Links
