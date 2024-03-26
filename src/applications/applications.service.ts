@@ -102,15 +102,10 @@ export class ApplicationsService {
     const application = await this.findOne(id, user);
 
     try {
-      await this.applicationsRepository
-        .createQueryBuilder()
-        .update(application)
-        .set({ ...updateApplicationDto })
-        .where({ id: id })
-        .execute();
+      Object.assign(application,updateApplicationDto)
 
       //Returned application with new data     
-      return await this.findOne(id, user);
+      return await this.applicationsRepository.save(application);
     } catch (error) {
       this.errorHandlingService.handleDBExceptions(error);
     }

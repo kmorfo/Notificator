@@ -1,6 +1,6 @@
 
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsString, Matches, MaxLength, MinLength } from "class-validator";
 
 export class CreateDeviceDto {
     @ApiProperty({
@@ -37,5 +37,4 @@ export class CreateDeviceDto {
         message: 'The ApplicationId must have a valid name like: com.example.appname'
     })
     applicationId: string;
-
 }

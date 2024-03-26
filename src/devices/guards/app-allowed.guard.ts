@@ -16,13 +16,13 @@ export class AppAllowedGuard implements CanActivate {
 
         // Extract applicationId and sha from request body
         const applicationId = req.body?.['applicationId']
-        const sha = req.body?.['sha']
+        const sha: string = req.body?.['sha']
 
         // Retrieve application based on applicationId
         const application = await this.getApp(applicationId)
 
         // Check if the provided sha is included in the validSHA array of the application
-        if (!application.validSHA.includes(sha))
+        if (!application.validSHA.includes(sha.toUpperCase()))
             throw new ForbiddenException(`Non valid SHA sign`)
 
         // If sha is valid, allow access

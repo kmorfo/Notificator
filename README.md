@@ -3,21 +3,39 @@
 </p>
 
 ## Description
-Notificator is a backend that allows us managed all our Firebase Cloud Messaging in one app.
+Notificator is a backend that allows us managed all our Firebase Cloud Messaging sending notifications to several devices per project in one app.
 
 Includes the following features:
-* Swagger OpenAPI
+* Swagger OpenAPI documentation
 * You can register one project per user/email 
 * Authentication and authorization, using JWT and roles
-* Separation of the Users and Auth modules
+* Features separated by modules like Users, Auth, application, messages, etc.
   * Administration application users. 
 * Password recovery via email with templates and temporary token
 * Email verification via email with templates and temporary token
-* Each project are multi user with roles
+* Each application are multi user with roles
 * Each application can have multiple channels with a default channel
+* The mobile device registers in the app, the SHA of the application being validated as in Firebase and the application ID com.example.app through a Guard
 * Send Notification messages
   * Optional Image
   * Optional data in JSON format 
+
+Notificator es un backend que nos permitirá administrar nuestro Firebase Cloud Messaging enviando notificaciones a los distintos dispositivos registrados por proyecto en una app.
+
+Incluye las siguientes características:
+* Documentación con Swagger OpenAPI
+* Se puede registrar un proyecto por usuario/email
+* Autentificación y autorización utilizando JWT y roles.
+* Características separadas por módulos como Auth, Users, application, messages, etc.
+  * Administración de los usuarios de cada aplicación.
+* Recuperación de contraseña vía email con plantillas y token temporal.
+* Verificación de email vía email con plantillas y token temporal.
+* Cada aplicación puede tener múltiples usuarios con roles
+* Cada aplicación puede tener múltiples canales con una canal 'default'
+*	El dispositivo móvil se registra en la app siendo validado el SHA de la aplicación como en Firebase y el ID de la aplicación com.example.app a través de un Guard
+* Envío de notificaciones
+  * Imagen opcional
+  * Extra data opcional en formato JSON 
 
 
 # Notifications API

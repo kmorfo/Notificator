@@ -20,8 +20,8 @@ import { UsersModule } from './users/users.module';
       database: process.env.DB_NAME,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
-      autoLoadEntities: true,
-      synchronize: true,
+      autoLoadEntities: false,//on production false
+      synchronize: false,//on production  false
     }),
     ApplicationsModule,
     AppModule,

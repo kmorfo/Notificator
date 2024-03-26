@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 import { Application } from "src/applications/entities/application.entity";
 import { Channel } from "src/channels/entities/channel.entity";
@@ -51,4 +51,12 @@ export class Device {
     @ManyToMany(() => Channel)
     @JoinTable()
     channels?: Channel[]
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    convertShaToUpperCase() {
+        if (this.sha) {
+            this.sha = this.sha.toUpperCase();
+        }
+    }
 }
