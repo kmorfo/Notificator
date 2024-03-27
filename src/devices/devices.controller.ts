@@ -38,19 +38,15 @@ export class DevicesController {
     return this.devicesService.findOne(term);
   }
 
-  @Patch(':id')
-  @Auth(ValidRoles.admin)
-  @UseGuards(AuthGuard(), SameAppGuard)
+  @Patch(':token')
   @ApiResponse({ status: 200, description: 'Returns a device object', type: Device })
   @ApiResponse({ status: 400, description: 'Bad Request' })
-  @ApiResponse({ status: 401, description: 'Unauthorized' })
-  @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
   @ApiResponse({ status: 404, description: 'Not Found' })
   update(
-    @Param('id', ParseUUIDPipe) id: string,
+    @Param('token') token: string,
     @Body() updateDeviceDto: UpdateDeviceDto
   ) {
-    return this.devicesService.update(id, updateDeviceDto);
+    return this.devicesService.update(token, updateDeviceDto);
   }
 
   @Delete(':id')

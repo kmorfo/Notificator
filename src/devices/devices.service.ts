@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -52,17 +52,17 @@ export class DevicesService {
       select: { application: { applicationId: true } }
     })
 
-    if (!device) throw new NotFoundException(`Application with ${term} not found`);
+    if (!device) throw new NotFoundException(`Device with ${term} not found`);
 
     const applicationID = device.application?.applicationId
-    device.application = null
+    // device.application = null
     return { device, applicationID };
   }
 
   async _findOneById(id: string): Promise<Device | undefined> {
     let device: Device = await this.deviceRepository.findOne({ where: { id: id } })
 
-    if (!device) throw new NotFoundException(`Application with ${id} not found`);
+    if (!device) throw new NotFoundException(`Device with ${id} not found`);
 
     return device;
   }
@@ -81,20 +81,20 @@ export class DevicesService {
     return deviceTokens.map(device => device.token);
   }
 
-  async update(id: string, updateDeviceDto: UpdateDeviceDto): Promise<Device | undefined> {
-    const device = await this._findOneById(id);
+  async update(token: string, updateDeviceDto: UpdateDeviceDto): Promise<Device | undefined> {
+    const { device } = await this.findOne(token);
     try {
       await this.deviceRepository
         .createQueryBuilder()
         .update(device)
         .set({ ...updateDeviceDto })
-        .where({ id: id })
+        .where({ token: token })
         .execute();
 
       //Returned application with new data 
-      const updatedDevice = await this._findOneById(id);
-      updatedDevice.application = null
-      return updatedDevice;
+      const updatedDevice = await this.findOne(token);
+      updatedDevice.device.application = null
+      return updatedDevice.device;
     } catch (error) {
       this.errorHandlingService.handleDBExceptions(error);
     }
