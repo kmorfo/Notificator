@@ -43,24 +43,66 @@ Incluye las siguientes características:
 2. ```yarn install```
 3. Clone `.env.template` file and rename it to `.env`
 4. Configure the environment variables according to our parameters 
-5. Get up database container with -d flag to open it decoupled from terminal
+5. We can run 
+5. Get up database container **-d** flag to open it decoupled from terminal
 ```
-docker-compose up -d
+ docker compose up -d
 ``` 
 6. Obtain a Firebase private key file 
    Intro Firebase settings project go to service account, click in Generate new private key 
-   
-## Running the app
 
-```bash
-# development
-$ yarn run start
+7. OpenAPI Documentation
 
-# watch mode
-$ yarn run start:dev
+```
+http://localhost:3010/api/
+```
 
-# production mode
-$ yarn run start:prod
+# Production notes
+Run this command
+```
+docker compose -f docker-compose.prod.yaml up -d
+```
+we also if we want to build only one of the services running the next command
+```
+docker compose -f docker-compose.prod.yaml build app
+```   
+
+## Alternatives
+As well with **-f** flag to specifying `docker-compose.dev.yaml` to run only postgres container
+```
+docker compose -f docker-compose.dev.yaml up
+yarn run start:dev
+
+  ``` 
+Get app in docker containerwith _Dockerfile_
+
+```
+docker container run  \
+-dp 3010:3010 \
+--name notificator \
+name/notificator_app:latest
+```
+
+## Standalone
+1. Create folder with the docker container name
+2. Copy `docker-compose.standalone.yaml` and `.env.prod` files to other empty folder
+3. Rename `.env.template` file  it to `.env` 
+4. Configure the environment variables according to our parameters 
+5. Run command
+```
+docker compose -f docker-compose.prod.yaml up -d
+```
+
+## If error when creating Image
+One way to solve it is by eliminating the folder `node_modules` and `yarn.lock` file of the project. 
+Now in the `package.json` file delete all **^** of the versions of the dependencies, this so that they install these exact versions.
+
+If we had already raised the project
+``` 
+docker compose down --volumes
+docker compose build
+docker compose up
+
 ```
 
 ### Links
@@ -70,7 +112,7 @@ $ yarn run start:prod
 
 [Nestjs File upload Docs](https://docs.nestjs.com/techniques/file-upload)
 
-### Examples
+### Other Examples
 **Send message to one token**
 ```
 await firebase
@@ -90,3 +132,14 @@ await firebase
   });
 
 ```
+
+**Create Docker image and push to DockerHub**
+```
+docker buildx build --platform linux/amd64,linux/arm64 \
+-t kmorfo/notificator_app:1.0.0 \
+--push .
+```
+
+## License
+
+[MIT licensed](LICENSE).

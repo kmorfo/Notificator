@@ -3,16 +3,9 @@ version: '3'
 services:
 
   app:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-
-    # command: yarn start:dev #It could be run here instead of on the stage
-    volumes:
-      - .:/app/
-      - /app/node_modules #Anonymous volume for node_modules
-
-    container_name: notificatorapp
+    #name:tag
+    image: kmorfo/notificator_app:1.0.0
+    container_name: notificator-app
     ports:
       - ${PORT}:${PORT}
     environment:
@@ -46,7 +39,6 @@ services:
     container_name: ${DB_NAME}
     volumes:
       - postgres-db:/var/lib/postgresql/data
-
 
 volumes:
   postgres-db:

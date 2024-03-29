@@ -1,0 +1,12 @@
+.git/
+Dockerfile
+dist/
+node_modules/
+postges/
+docker-compose.prod.yaml
+docker-compose.dev.yaml
+docker-compose.yaml
+gitimages/
+static/
+.env.prod
+.env
