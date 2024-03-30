@@ -2,8 +2,9 @@
   <a href="https://rlujancreations.es" target="blank"><img src="./gitImages/rlujanlogo.png" width="300" alt="RLujanCreations Logo" /></a>
 </p>
 
+<a href="./README_ES.md" target="blank">This doc in Spanish</a>
 ## Description
-Notificator is a backend that allows us managed all our Firebase Cloud Messaging sending notifications to several devices per project in one app.
+Notificator is a backend that allow us managed all our Firebase Cloud Messaging sending notifications to several devices per project in one app.
 
 Includes the following features:
 * Swagger OpenAPI documentation
@@ -20,33 +21,15 @@ Includes the following features:
   * Optional Image
   * Optional data in JSON format 
 
-Notificator es un backend que nos permitirá administrar nuestro Firebase Cloud Messaging enviando notificaciones a los distintos dispositivos registrados por proyecto en una app.
 
-Incluye las siguientes características:
-* Documentación con Swagger OpenAPI
-* Se puede registrar un proyecto por usuario/email
-* Autentificación y autorización utilizando JWT y roles.
-* Características separadas por módulos como Auth, Users, application, messages, etc.
-  * Administración de los usuarios de cada aplicación.
-* Recuperación de contraseña vía email con plantillas y token temporal.
-* Verificación de email vía email con plantillas y token temporal.
-* Cada aplicación puede tener múltiples usuarios con roles
-* Cada aplicación puede tener múltiples canales con una canal 'default'
-*	El dispositivo móvil se registra en la app siendo validado el SHA de la aplicación como en Firebase y el ID de la aplicación com.example.app a través de un Guard
-* Envío de notificaciones
-  * Imagen opcional
-  * Extra data opcional en formato JSON 
-
-
-# Notifications API
+# Notificator API
 1. Clone repositoty
 2. ```yarn install```
 3. Clone `.env.template` file and rename it to `.env`
 4. Configure the environment variables according to our parameters 
-5. We can run 
 5. Get up database container **-d** flag to open it decoupled from terminal
 ```
- docker compose up -d
+ docker compose -f docker-compose.dev.yaml -d up 
 ``` 
 6. Obtain a Firebase private key file 
    Intro Firebase settings project go to service account, click in Generate new private key 
@@ -60,7 +43,7 @@ http://localhost:3010/api/
 # Production notes
 Run this command
 ```
-docker compose -f docker-compose.prod.yaml up -d
+docker compose -f docker-compose.prod.yaml -d up 
 ```
 we also if we want to build only one of the services running the next command
 ```
@@ -68,29 +51,29 @@ docker compose -f docker-compose.prod.yaml build app
 ```   
 
 ## Alternatives
-As well with **-f** flag to specifying `docker-compose.dev.yaml` to run only postgres container
+With the `docker-compose.yaml` file we can create the application in a docker container, launching the container with the database in turn.
 ```
 docker compose -f docker-compose.dev.yaml up
 yarn run start:dev
 
   ``` 
-Get app in docker containerwith _Dockerfile_
+Get app in docker container with _Dockerfile_
 
 ```
 docker container run  \
 -dp 3010:3010 \
 --name notificator \
-name/notificator_app:latest
+kmorfo/notificator_app:latest
 ```
 
 ## Standalone
 1. Create folder with the docker container name
-2. Copy `docker-compose.standalone.yaml` and `.env.prod` files to other empty folder
+2. Copy `docker-compose.standalone.yaml` and `.env.template` files to the empty folder
 3. Rename `.env.template` file  it to `.env` 
 4. Configure the environment variables according to our parameters 
 5. Run command
 ```
-docker compose -f docker-compose.prod.yaml up -d
+docker compose -f docker-compose.standalone.yaml up -d
 ```
 
 ## If error when creating Image
@@ -113,7 +96,7 @@ docker compose up
 [Nestjs File upload Docs](https://docs.nestjs.com/techniques/file-upload)
 
 ### Other Examples
-**Send message to one token**
+**Sending a notification to a single device token**
 ```
 await firebase
   .messaging()
