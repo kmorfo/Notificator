@@ -2,7 +2,8 @@
   <a href="https://rlujancreations.es" target="blank"><img src="./gitImages/rlujanlogo.png" width="300" alt="RLujanCreations Logo" /></a>
 </p>
 
-<a href="./README_ES.md" target="blank">This doc in Spanish</a>
+<a href="README_ES.md" target="blank">This doc in Spanish</a>
+
 ## Description
 Notificator is a backend that allow us managed all our Firebase Cloud Messaging sending notifications to several devices per project in one app.
 
