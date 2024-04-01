@@ -5,7 +5,7 @@
 <a href="README.md" target="blank">Este documento en Inglés</a>
 
 ## Description
-Notificator es un backend que nos permitirá administrar nuestro Firebase Cloud Messaging enviando notificaciones a los distintos dispositivos registrados por proyecto en una app.
+Notificator es un backend API Rest que nos permitirá administrar nuestro Firebase Cloud Messaging enviando notificaciones a los distintos dispositivos registrados por proyecto en una app.
 
 Incluye las siguientes características:
 * Documentación con Swagger OpenAPI

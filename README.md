@@ -5,7 +5,7 @@
 <a href="README_ES.md" target="blank">This doc in Spanish</a>
 
 ## Description
-Notificator is a backend that allow us managed all our Firebase Cloud Messaging sending notifications to several devices per project in one app.
+Notificator is an API Rest backend that allows us to manage all our Firebase Cloud Messaging projects sending notifications to several devices per project in one app.
 
 Includes the following features:
 * Swagger OpenAPI documentation
