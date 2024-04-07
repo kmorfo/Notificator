@@ -34,15 +34,34 @@ export class MessagesService {
 
   async create(createMessageDto: CreateMessageDto, user: User): Promise<Message | undefined> {
     await this.initializeFirebaseApp(user);
-
     const { applicationId, channel, ...messageData } = createMessageDto;
 
-    let channelMsg = await this.channelsService.findOneByNameApp(channel, applicationId);
+    let channelMsg: Channel = await this.channelsService.findOneByNameApp(channel, applicationId);
 
     const tokens = await this.devicesService.getAllDeviceTokenBy(channelMsg.name, applicationId);
 
     if (tokens.length <= 0)
       throw new NotFoundException(`The application with id ${applicationId} does not have devices registered`);
+
+    return await this.createMessage(createMessageDto, channelMsg, user, tokens)
+  }
+
+  async createTest(createMessageDto: CreateMessageDto, user: User, token: string): Promise<Message | undefined> {
+    await this.initializeFirebaseApp(user);
+    const { applicationId, channel, ...messageData } = createMessageDto;
+
+    let channelMsg: Channel = await this.channelsService.findOneByNameApp(channel, applicationId);
+
+    const tokens = [token];
+
+    if (tokens.length <= 0)
+      throw new NotFoundException(`The application with id ${applicationId} does not have devices registered`);
+
+    return await this.createMessage(createMessageDto, channelMsg, user, tokens)
+  }
+
+  private async createMessage(createMessageDto: CreateMessageDto, channelMsg: Channel, user: User, tokens: string[]): Promise<Message | undefined> {
+    const { applicationId, channel, ...messageData } = createMessageDto;
 
     try {
       let message = await this.messagesRepository.create(messageData);

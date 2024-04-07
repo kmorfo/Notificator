@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query, Param } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -28,6 +28,23 @@ export class MessagesController {
     @GetUser() user: User
   ) {
     return this.messagesService.create(createMessageDto, user);
+  }
+
+
+  @Post(':token')
+  @Auth()
+  @UseGuards(AuthGuard(), SameAppUserGuard)
+  @ApiResponse({ status: 201, description: 'Message was created', type: Message })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized, Token not valid' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
+  @ApiResponse({ status: 404, description: 'Not Found. Application not found or project doesnt have Secret Key File.' })
+  createTest(
+    @Body() createMessageDto: CreateMessageDto,
+    @GetUser() user: User,
+    @Param('token') token: string
+  ) {
+    return this.messagesService.createTest(createMessageDto, user, token);
   }
 
   @Get()
