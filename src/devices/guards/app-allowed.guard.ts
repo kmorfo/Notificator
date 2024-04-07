@@ -21,8 +21,9 @@ export class AppAllowedGuard implements CanActivate {
         // Retrieve application based on applicationId
         const application = await this.getApp(applicationId)
 
+        // If application.validSHA is empty, will not be verified device sha
         // Check if the provided sha is included in the validSHA array of the application
-        if (!application.validSHA.includes(sha.toUpperCase()))
+        if (application.validSHA.length > 0 && !application.validSHA.includes(sha.toUpperCase()))
             throw new ForbiddenException(`Non valid SHA sign`)
 
         // If sha is valid, allow access
