@@ -1,9 +1,9 @@
-import { Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+import * as cron from 'node-cron';
 import * as firebase from 'firebase-admin';
-import * as path from 'path';
 
 import { ChannelsService } from 'src/channels/channels.service';
 import { CreateMessageDto } from './dto/create-message.dto';
@@ -12,10 +12,9 @@ import { FilterMessageDto } from './dto/filter-message.dto';
 import { Message } from './entities/message.entity';
 import { User } from 'src/users/entities/user.entity';
 import { ProjectsService } from '../projects/projects.service';
-import { Application } from 'src/applications/entities/application.entity';
-import { ApplicationsService } from '../applications/applications.service';
 import { Channel } from 'src/channels/entities/channel.entity';
 import { DevicesService } from 'src/devices/devices.service';
+
 
 @Injectable()
 export class MessagesService {
@@ -25,14 +24,13 @@ export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private readonly messagesRepository: Repository<Message>,
-    // private readonly applicationsService: ApplicationsService,
     private readonly channelsService: ChannelsService,
     private readonly devicesService: DevicesService,
     private readonly errorHandlingService: ErrorHandlingService,
     private readonly projectsService: ProjectsService,
   ) { }
 
-  async create(createMessageDto: CreateMessageDto, user: User): Promise<Message | undefined> {
+  async create(createMessageDto: CreateMessageDto, user: User): Promise<Message | undefined | String> {
     await this.initializeFirebaseApp(user);
     const { applicationId, channel, ...messageData } = createMessageDto;
 
@@ -43,10 +41,13 @@ export class MessagesService {
     if (tokens.length <= 0)
       throw new NotFoundException(`The application with id ${applicationId} does not have devices registered`);
 
-    return await this.createMessage(createMessageDto, channelMsg, user, tokens)
+    if (!createMessageDto.time)
+      return await this.createMessage(createMessageDto, channelMsg, user, tokens)
+    else
+      return await this.scheduleTask(createMessageDto, channelMsg, user, tokens)
   }
 
-  async createTest(createMessageDto: CreateMessageDto, user: User, token: string): Promise<Message | undefined> {
+  async createTest(createMessageDto: CreateMessageDto, user: User, token: string): Promise<Message | undefined | String> {
     await this.initializeFirebaseApp(user);
     const { applicationId, channel, ...messageData } = createMessageDto;
 
@@ -57,7 +58,30 @@ export class MessagesService {
     if (tokens.length <= 0)
       throw new NotFoundException(`The application with id ${applicationId} does not have devices registered`);
 
-    return await this.createMessage(createMessageDto, channelMsg, user, tokens)
+    if (!createMessageDto.time)
+      return await this.createMessage(createMessageDto, channelMsg, user, tokens)
+    else
+      return await this.scheduleTask(createMessageDto, channelMsg, user, tokens)
+  }
+
+
+  private scheduleTask(createMessageDto, channelMsg, user, tokens): String {
+    let cronPattern = '';
+
+    if (createMessageDto.time) {
+      const [hour, minute] = createMessageDto.time.split(':');
+      cronPattern += `${minute || '*'} ${hour || '*'} * * *`;
+    }
+
+    if (createMessageDto.date) {
+      const [day, month, year] = createMessageDto.date.split('/');
+      cronPattern = `0 0 ${day} ${month} * ${year}`;
+    }
+
+    cron.schedule(cronPattern, () => {
+      this.createMessage(createMessageDto, channelMsg, user, tokens)
+    });
+    return "The message was scheduled correctly"
   }
 
   private async createMessage(createMessageDto: CreateMessageDto, channelMsg: Channel, user: User, tokens: string[]): Promise<Message | undefined> {

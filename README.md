@@ -21,6 +21,7 @@ Includes the following features:
 * Send Notification messages
   * Optional Image
   * Optional data in JSON format 
+* Notification Scheduling
 
 
 # Notificator API

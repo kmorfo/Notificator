@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsObject, IsOptional, IsString, IsUrl, Matches, MaxLength, MinLength } from "class-validator";
+import { IsInt, IsObject, IsOptional, IsString, IsUrl, Matches, Max, MaxLength, Min, MinLength } from "class-validator";
 
 export class CreateMessageDto {
     @ApiProperty({
@@ -60,4 +60,14 @@ export class CreateMessageDto {
     @IsString()
     @MinLength(2)
     channel?: string;
+
+    @IsOptional()
+    @IsString()
+    @Matches(/^([01]\d|2[0-3]):([0-5]\d)?$/, { message: 'Time format must be HH:MM' })
+    time?: string;
+  
+    @IsOptional()
+    @IsString()
+    @Matches(/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/(20\d{2}|19\d{2})$/, { message: 'Date format must be DD/MM/YYYY' })
+    date?: string;
 }

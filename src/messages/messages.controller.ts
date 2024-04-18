@@ -10,6 +10,11 @@ import { SameAppUserGuard } from 'src/common/guards/same-app-user.guard';
 import { User } from 'src/users/entities/user.entity';
 import { FilterMessageDto } from './dto/filter-message.dto';
 
+export class ApiResponseUnion {
+  message?: Message;
+  stringMessage?: string;
+}
+
 @ApiTags('Messages')
 @Controller('messages')
 export class MessagesController {
@@ -18,7 +23,7 @@ export class MessagesController {
   @Post()
   @Auth()
   @UseGuards(AuthGuard(), SameAppUserGuard)
-  @ApiResponse({ status: 201, description: 'Message was created', type: Message })
+  @ApiResponse({ status: 201, description: 'Message was created', type: ApiResponseUnion })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized, Token not valid' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
@@ -34,7 +39,7 @@ export class MessagesController {
   @Post(':token')
   @Auth()
   @UseGuards(AuthGuard(), SameAppUserGuard)
-  @ApiResponse({ status: 201, description: 'Message was created', type: Message })
+  @ApiResponse({ status: 201, description: 'Message was created', type: ApiResponseUnion })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized, Token not valid' })
   @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
