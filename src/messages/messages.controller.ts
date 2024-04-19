@@ -1,14 +1,15 @@
-import { Controller, Get, Post, Body, UseGuards, Query, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query, Param, Delete } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
 import { Auth, GetUser } from 'src/auth/decorators';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { DeleteTaskDto } from './dto/delete-task.dto';
+import { FilterMessageDto } from './dto/filter-message.dto';
 import { Message } from './entities/message.entity';
 import { MessagesService } from './messages.service';
 import { SameAppUserGuard } from 'src/common/guards/same-app-user.guard';
 import { User } from 'src/users/entities/user.entity';
-import { FilterMessageDto } from './dto/filter-message.dto';
 
 export class ApiResponseUnion {
   message?: Message;
@@ -61,5 +62,30 @@ export class MessagesController {
   @ApiResponse({ status: 404, description: 'Not Found. No messages found with these params.' })
   findOne(@Query() filterMessageDto: FilterMessageDto) {
     return this.messagesService.findBy(filterMessageDto);
+  }
+
+  @Get('tasks/:term')
+  @Auth()
+  @UseGuards(AuthGuard(), SameAppUserGuard)
+  @ApiResponse({ status: 200, description: 'Returns array of tasks filtered', type: Array<String> })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
+  @ApiResponse({ status: 404, description: 'Not Found. No tasks found with these params.' })
+  findAllTasks(
+    @Param('term') term: string
+  ) {
+    return this.messagesService.findTasksBy(term);
+  }
+
+  @Delete('tasks')
+  @Auth()
+  @UseGuards(AuthGuard(), SameAppUserGuard)
+  @ApiResponse({ status: 200, description: 'Task was removed' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 403, description: 'Forbidden. Token related.' })
+  @ApiResponse({ status: 404, description: 'Not Found' })
+  removeTasksBy(@Body() deleteTaskDto: DeleteTaskDto) {
+    return this.messagesService.removeTasksBy(deleteTaskDto);
   }
 }

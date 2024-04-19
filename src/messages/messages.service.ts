@@ -14,12 +14,15 @@ import { User } from 'src/users/entities/user.entity';
 import { ProjectsService } from '../projects/projects.service';
 import { Channel } from 'src/channels/entities/channel.entity';
 import { DevicesService } from 'src/devices/devices.service';
+import { DeleteTaskDto } from './dto/delete-task.dto';
 
 
 @Injectable()
 export class MessagesService {
   private readonly logger = new Logger('MessagesService');
   private firebaseApp: firebase.app.App | null = null;
+  private cron: typeof cron;
+  private scheduledTasks: Record<string, cron.ScheduledTask>;
 
   constructor(
     @InjectRepository(Message)
@@ -28,7 +31,10 @@ export class MessagesService {
     private readonly devicesService: DevicesService,
     private readonly errorHandlingService: ErrorHandlingService,
     private readonly projectsService: ProjectsService,
-  ) { }
+  ) {
+    this.cron = cron;
+    this.scheduledTasks = {};
+  }
 
   async create(createMessageDto: CreateMessageDto, user: User): Promise<Message | undefined | String> {
     await this.initializeFirebaseApp(user);
@@ -64,25 +70,6 @@ export class MessagesService {
       return await this.scheduleTask(createMessageDto, channelMsg, user, tokens)
   }
 
-
-  private scheduleTask(createMessageDto, channelMsg, user, tokens): String {
-    let cronPattern = '';
-
-    if (createMessageDto.time) {
-      const [hour, minute] = createMessageDto.time.split(':');
-      cronPattern += `${minute || '*'} ${hour || '*'} * * *`;
-    }
-
-    if (createMessageDto.date) {
-      const [day, month, year] = createMessageDto.date.split('/');
-      cronPattern = `0 0 ${day} ${month} * ${year}`;
-    }
-
-    cron.schedule(cronPattern, () => {
-      this.createMessage(createMessageDto, channelMsg, user, tokens)
-    });
-    return "The message was scheduled correctly"
-  }
 
   private async createMessage(createMessageDto: CreateMessageDto, channelMsg: Channel, user: User, tokens: string[]): Promise<Message | undefined> {
     const { applicationId, channel, ...messageData } = createMessageDto;
@@ -177,6 +164,49 @@ export class MessagesService {
       throw new NotFoundException(`No messages found with these params.`);
 
     return messages
+  }
+
+
+  private scheduleTask(createMessageDto, channelMsg, user, tokens): String {
+    let cronPattern = '';
+
+    if (createMessageDto.time) {
+      const [hour, minute] = createMessageDto.time.split(':');
+      cronPattern += `${minute || '*'} ${hour || '*'} * * *`;
+    }
+
+    if (createMessageDto.date) {
+      const [day, month, year] = createMessageDto.date.split('/');
+      const [hour, minute] = createMessageDto.time ? createMessageDto.time.split(':') : ['0', '0'];
+      cronPattern = `${minute} ${hour} ${day} ${month} * ${year}`;
+    }
+
+    const task = this.cron.schedule(cronPattern, () => {
+      this.createMessage(createMessageDto, channelMsg, user, tokens)
+    });
+
+    task.jobName = `${createMessageDto.applicationId}#${cronPattern}#${new Date().getTime().toString()}`
+    this.scheduledTasks[task.jobName] = task;
+
+    return "The message was scheduled correctly"
+  }
+
+  findTasksBy(applicationID: String): string[] {
+    const tasks = Object.values(this.scheduledTasks).filter(task => task.jobName.includes(applicationID));
+    return tasks.map(task => task.jobName);
+  }
+
+  removeTasksBy(deleteTaskDto: DeleteTaskDto): string {
+    const taskToDelete = this.scheduledTasks[deleteTaskDto.taskId]
+
+    if (!taskToDelete || taskToDelete == undefined)
+      throw new NotFoundException(`Task with id ${deleteTaskDto.taskId} not found.`);
+
+    taskToDelete.stop();
+
+    delete this.scheduledTasks[deleteTaskDto.taskId];
+
+    return `Task with id: ${deleteTaskDto.taskId} was removed`
   }
 
 }
