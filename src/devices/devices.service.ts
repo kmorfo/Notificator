@@ -48,7 +48,7 @@ export class DevicesService {
 
     let device: Device = await this.deviceRepository.findOne({
       where: condition,
-      relations: { application: true },
+      relations: { application: true, channels: true },
       select: { application: { applicationId: true } }
     })
 
@@ -82,19 +82,40 @@ export class DevicesService {
   }
 
   async update(token: string, updateDeviceDto: UpdateDeviceDto): Promise<Device | undefined> {
-    const { device } = await this.findOne(token);
-    try {
-      await this.deviceRepository
-        .createQueryBuilder()
-        .update(device)
-        .set({ ...updateDeviceDto })
-        .where({ token: token })
-        .execute();
+    const { channels, ...data } = updateDeviceDto;
 
-      //Returned application with new data 
-      const updatedDevice = await this.findOne(token);
-      updatedDevice.device.application = null
-      return updatedDevice.device;
+    try {
+      const { device, applicationID } = await this.findOne(token);
+      const deviceToUpdate = { ...device, ...data };
+
+      // Check for changes to device settings
+      const isDataChanged = Object.keys(data).some(key => deviceToUpdate[key] !== device[key]);
+
+      if (isDataChanged) await this.deviceRepository.save(deviceToUpdate);
+
+
+      if (channels !== undefined) {
+        // Set the new channels
+        const newChannels = [];
+        if (channels.length > 0) {
+          for (const channelName of channels) {
+            const channelToAdd = await this.channelsService.findOneByNameApp(channelName, applicationID);
+            if (channelToAdd) newChannels.push(channelToAdd);
+          }
+        }
+        // Add default channel
+        const defaultChannel = await this.channelsService.findOneByNameApp("default", applicationID);
+        if (defaultChannel) newChannels.push(defaultChannel);
+
+        // Update the relation device with channels
+        await this.deviceRepository
+          .createQueryBuilder()
+          .relation(Device, "channels")
+          .of(device)
+          .addAndRemove(newChannels, device.channels);
+      }
+
+      return (await this.findOne(token)).device;
     } catch (error) {
       this.errorHandlingService.handleDBExceptions(error);
     }

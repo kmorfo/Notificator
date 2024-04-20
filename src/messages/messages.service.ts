@@ -41,11 +41,12 @@ export class MessagesService {
     const { applicationId, channel, ...messageData } = createMessageDto;
 
     let channelMsg: Channel = await this.channelsService.findOneByNameApp(channel, applicationId);
+    if (!channelMsg) channelMsg = await this.channelsService.findOneByNameApp("default", applicationId);
 
     const tokens = await this.devicesService.getAllDeviceTokenBy(channelMsg.name, applicationId);
 
     if (tokens.length <= 0)
-      throw new NotFoundException(`The application with id ${applicationId} does not have devices registered`);
+      throw new NotFoundException(`The application with id ${applicationId} does not have devices registered on the ${channelMsg.name} channel`);
 
     if (!createMessageDto.time)
       return await this.createMessage(createMessageDto, channelMsg, user, tokens)
@@ -58,6 +59,7 @@ export class MessagesService {
     const { applicationId, channel, ...messageData } = createMessageDto;
 
     let channelMsg: Channel = await this.channelsService.findOneByNameApp(channel, applicationId);
+    if (!channelMsg) channelMsg = await this.channelsService.findOneByNameApp("default", applicationId);
 
     const tokens = [token];
 
@@ -120,7 +122,7 @@ export class MessagesService {
 
     const fireMessage: any = {
       notification: notificationMessage,
-      topic: message.channel.name,
+      condition: `'${message.channel.name}' in topics`,
       tokens: tokens
     }
 

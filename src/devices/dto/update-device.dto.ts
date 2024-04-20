@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 
-import { IsBoolean, IsOptional } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
 
 import { CreateDeviceDto } from './create-device.dto';
 
@@ -12,4 +12,14 @@ export class UpdateDeviceDto extends PartialType(CreateDeviceDto) {
     @IsBoolean()
     @IsOptional()
     isActive: boolean;
+
+    @ApiProperty({
+        description: 'Name of Channels to subscribe',
+        example: '[News,Sports]',
+        nullable:true
+    })
+    @IsArray()
+    @IsString({ each: true })
+    @IsOptional()
+    channels?: string[];
 }

@@ -52,7 +52,6 @@ export class ChannelsService {
   }
 
   async findOneByNameApp(name = "default", applicationID: string): Promise<Channel | undefined> {
-
     const channel = await this.channelsRepository
       .createQueryBuilder('channel')
       .innerJoinAndSelect('channel.application', 'application')
