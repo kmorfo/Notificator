@@ -6,6 +6,7 @@ import { AppAllowedGuard } from './guards/app-allowed.guard';
 import { Auth } from 'src/auth/decorators';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { Device } from './entities/device.entity';
+import { DeviceChannelDto } from './dto/device-channel.dto';
 import { DevicesService } from './devices.service';
 import { SameAppGuard } from './guards/same-app.guard';
 import { UpdateDeviceDto } from './dto/update-device.dto';
@@ -47,6 +48,28 @@ export class DevicesController {
     @Body() updateDeviceDto: UpdateDeviceDto
   ) {
     return this.devicesService.update(token, updateDeviceDto);
+  }
+
+  @Patch('subscribe/:token')
+  @ApiResponse({ status: 200, description: 'Returns a device object', type: Device })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'Not Found' })
+  subscribe(
+    @Param('token') token: string,
+    @Body() deviceChannelDto: DeviceChannelDto
+  ) {
+    return this.devicesService.subscribe(token, deviceChannelDto);
+  }
+  
+  @Delete('unsubscribe/:token')
+  @ApiResponse({ status: 200, description: 'Returns a device object', type: Device })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 404, description: 'Not Found' })
+  unSubscribe(
+    @Param('token') token: string,
+    @Body() deviceChannelDto: DeviceChannelDto
+  ) {
+    return this.devicesService.unSubscribe(token, deviceChannelDto);
   }
 
   @Delete(':id')

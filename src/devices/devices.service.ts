@@ -10,6 +10,7 @@ import { ErrorHandlingService } from 'src/common/error-handling/error-handling.s
 import { isUUID } from 'class-validator';
 import { UpdateDeviceDto } from './dto/update-device.dto';
 import { ChannelsService } from 'src/channels/channels.service';
+import { DeviceChannelDto } from './dto/device-channel.dto';
 
 @Injectable()
 export class DevicesService {
@@ -82,38 +83,62 @@ export class DevicesService {
   }
 
   async update(token: string, updateDeviceDto: UpdateDeviceDto): Promise<Device | undefined> {
-    const { channels, ...data } = updateDeviceDto;
-
     try {
       const { device, applicationID } = await this.findOne(token);
-      const deviceToUpdate = { ...device, ...data };
+      const deviceToUpdate = { ...device, ...updateDeviceDto };
 
       // Check for changes to device settings
-      const isDataChanged = Object.keys(data).some(key => deviceToUpdate[key] !== device[key]);
+      const isDataChanged = Object.keys(updateDeviceDto).some(key => deviceToUpdate[key] !== device[key]);
 
       if (isDataChanged) await this.deviceRepository.save(deviceToUpdate);
 
+      return (await this.findOne(token)).device;
+    } catch (error) {
+      this.errorHandlingService.handleDBExceptions(error);
+    }
+  }
 
-      if (channels !== undefined) {
-        // Set the new channels
-        const newChannels = [];
-        if (channels.length > 0) {
-          for (const channelName of channels) {
-            const channelToAdd = await this.channelsService.findOneByNameApp(channelName, applicationID);
-            if (channelToAdd) newChannels.push(channelToAdd);
-          }
-        }
-        // Add default channel
-        const defaultChannel = await this.channelsService.findOneByNameApp("default", applicationID);
-        if (defaultChannel) newChannels.push(defaultChannel);
+  async subscribe(token: string, deviceChannelDto: DeviceChannelDto): Promise<Device | undefined> {
+    const { device, applicationID } = await this.findOne(token);
 
-        // Update the relation device with channels
-        await this.deviceRepository
-          .createQueryBuilder()
-          .relation(Device, "channels")
-          .of(device)
-          .addAndRemove(newChannels, device.channels);
-      }
+    const channelToAdd = await this.channelsService.findOneByNameApp(deviceChannelDto.channel, applicationID);
+
+    if (channelToAdd == null)
+      throw new NotFoundException(`Channel ${deviceChannelDto.channel} not found on ${applicationID}`)
+
+
+    //Check if channel exist in device already
+    const isChannelAlreadySubscribed = device.channels.some(channel => channel.id === channelToAdd.id);
+
+    if (isChannelAlreadySubscribed) return device
+
+    try {
+      await this.deviceRepository
+        .createQueryBuilder()
+        .relation(Device, "channels")
+        .of(device)
+        .add(channelToAdd);
+
+      return (await this.findOne(token)).device;
+    } catch (error) {
+      this.errorHandlingService.handleDBExceptions(error);
+    }
+  }
+
+  async unSubscribe(token: string, deviceChannelDto: DeviceChannelDto): Promise<Device | undefined> {
+    const { device, applicationID } = await this.findOne(token);
+
+    const channelToRemove = await this.channelsService.findOneByNameApp(deviceChannelDto.channel, applicationID);
+
+    if (channelToRemove == null)
+      throw new NotFoundException(`Channel ${deviceChannelDto.channel} not found on ${applicationID}`)
+
+    try {
+      await this.deviceRepository
+        .createQueryBuilder()
+        .relation(Device, "channels")
+        .of(device)
+        .remove(channelToRemove);
 
       return (await this.findOne(token)).device;
     } catch (error) {

@@ -119,7 +119,7 @@ await firebase
 **Creación de la imagen Docker y subirla a DockerHub**
 ```
 docker buildx build --platform linux/amd64,linux/arm64 \
--t kmorfo/notificator_app:1.1.0 \
+-t kmorfo/notificator_app:1.1.1 \
 --push .
 ```
 
