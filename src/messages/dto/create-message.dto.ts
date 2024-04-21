@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsInt, IsObject, IsOptional, IsString, IsUrl, MAX, Matches, Max, MaxLength, Min, MinLength, Validate } from "class-validator";
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsInt, IsObject, IsOptional, IsString, IsUrl, Matches, Max, MaxLength, Min, MinLength } from "class-validator";
 
 export class CreateMessageDto {
     @ApiProperty({
@@ -62,35 +62,49 @@ export class CreateMessageDto {
     @MinLength(2)
     channel?: string;
 
-    //TODO Añadir Swagger docs al timer
-
+    @ApiProperty({
+        description: 'Hour to send the notification',
+        example: '12:34'
+    })
     @IsOptional()
     @IsString()
     @Matches(/^([01]\d|2[0-3]):([0-5]\d)?$/, { message: 'Time format must be HH:MM' })
     time?: string;
 
+    @ApiProperty({
+        description: 'Day to send the notification',
+        example: '31'
+    })
     @IsOptional()
     @IsInt({ message: 'Day must be a number' })
     @Min(1, { message: 'Day must be between 1 and 31' })
     @Max(31, { message: 'Day must be between 1 and 31' })
     day?: number;
 
+    @ApiProperty({
+        description: 'Days of week to send the notification',
+        example: '[1,2]'
+    })
     @IsOptional()
     @IsArray()
     @ArrayMinSize(1, { message: 'You must provide at least one day.' })
     @ArrayMaxSize(7, { message: 'Cannot provide more than 7 days.' })
-    @Min(0, {each: true}) // each number in array is 0 or higher
-    @Max(7, {each: true}) // each number in array is 2 or lower
+    @Min(0, { each: true }) // each number in array is 0 or higher
+    @Max(7, { each: true }) // each number in array is 2 or lower
     @ArrayUnique((value: number) => value, { message: 'The days must be unique.' })
     @Type(() => Number)
     readonly days?: number[];
 
+    @ApiProperty({
+        description: 'Months to send the notification',
+        example: '[1,12]'
+    })
     @IsOptional()
     @IsArray()
     @ArrayMinSize(1, { message: 'You must provide at least one month.' })
     @ArrayMaxSize(12, { message: 'Cannot provide more than 12 months.' })
-    @Min(1, {each: true}) // each number in array is 0 or higher
-    @Max(12, {each: true}) // each number in array is 2 or lower
+    @Min(1, { each: true }) // each number in array is 0 or higher
+    @Max(12, { each: true }) // each number in array is 2 or lower
     @ArrayUnique((value: number) => value, { message: 'The months must be unique.' })
     @Type(() => Number)
     readonly months?: number[];
