@@ -5,16 +5,16 @@ import { Repository } from 'typeorm';
 import * as cron from 'node-cron';
 import * as firebase from 'firebase-admin';
 
+import { Channel } from 'src/channels/entities/channel.entity';
 import { ChannelsService } from 'src/channels/channels.service';
 import { CreateMessageDto } from './dto/create-message.dto';
+import { DeleteTaskDto } from './dto/delete-task.dto';
+import { DevicesService } from 'src/devices/devices.service';
 import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 import { FilterMessageDto } from './dto/filter-message.dto';
 import { Message } from './entities/message.entity';
-import { User } from 'src/users/entities/user.entity';
 import { ProjectsService } from '../projects/projects.service';
-import { Channel } from 'src/channels/entities/channel.entity';
-import { DevicesService } from 'src/devices/devices.service';
-import { DeleteTaskDto } from './dto/delete-task.dto';
+import { User } from 'src/users/entities/user.entity';
 
 
 @Injectable()
@@ -97,20 +97,6 @@ export class MessagesService {
     }
   }
 
-  async initializeFirebaseApp(user: User) {
-    const project = await this.projectsService.findOneByUser(user);
-    if (!project) throw new NotFoundException(`No project found for user ${user.username}.`);
-    if (project.secretkeyfile == "") throw new NotFoundException(`Project ${project.name} doesn't have a Secret Key File.`);
-
-    if (!this.firebaseApp) {
-      this.firebaseApp = await firebase.initializeApp({
-        credential: firebase.credential.cert(`./static/projects/${project.secretkeyfile}`)
-      });
-    }
-
-    this.logger.log(`Firebase initilized with ./static/projects/${project.secretkeyfile} file`);
-  }
-
   private async sendMessage(message: Message, tokens: string[]) {
     //Setting notification with optional params
     const notificationMessage: firebase.messaging.NotificationMessagePayload = {
@@ -136,7 +122,7 @@ export class MessagesService {
         this.logger.error(`Error sending message:', ${error}`)
       });
 
-    //When the message has been sent, the connection firebaseApp is closed
+    //When the message has been sent, the connection with firebaseApp will close
     if (this.firebaseApp) {
       await this.firebaseApp.delete();
       this.firebaseApp = null;
@@ -172,15 +158,32 @@ export class MessagesService {
   private scheduleTask(createMessageDto, channelMsg, user, tokens): String {
     let cronPattern = '';
 
+    //If we had sent any time params, it will add to cronPattern
     if (createMessageDto.time) {
       const [hour, minute] = createMessageDto.time.split(':');
-      cronPattern += `${minute || '*'} ${hour || '*'} * * *`;
+      cronPattern += `${minute || '*'} ${hour || '*'} `;
+    } else {
+      cronPattern += '0 0 ';
     }
 
-    if (createMessageDto.date) {
-      const [day, month, year] = createMessageDto.date.split('/');
-      const [hour, minute] = createMessageDto.time ? createMessageDto.time.split(':') : ['0', '0'];
-      cronPattern = `${minute} ${hour} ${day} ${month} * ${year}`;
+    if (createMessageDto.day) {
+      cronPattern += `${createMessageDto.day} `;
+    } else {
+      cronPattern += '* ';
+    }
+
+    if (createMessageDto.months && createMessageDto.months.length > 0) {
+      const monthsPattern = createMessageDto.months.join(',');
+      cronPattern += `${monthsPattern} `;
+    } else {
+      cronPattern += '* ';
+    }
+
+    if (createMessageDto.days && createMessageDto.days.length > 0) {
+      const daysPattern = createMessageDto.days.join(',');
+      cronPattern += `${daysPattern} `;
+    } else {
+      cronPattern += '*';
     }
 
     const task = this.cron.schedule(cronPattern, () => {
@@ -190,7 +193,7 @@ export class MessagesService {
     task.jobName = `${createMessageDto.applicationId}#${cronPattern}#${new Date().getTime().toString()}`
     this.scheduledTasks[task.jobName] = task;
 
-    return "The message was scheduled correctly"
+    return `The message was scheduled correctly #${cronPattern}`;
   }
 
   findTasksBy(applicationID: String): string[] {
@@ -210,5 +213,21 @@ export class MessagesService {
 
     return `Task with id: ${deleteTaskDto.taskId} was removed`
   }
+
+
+  async initializeFirebaseApp(user: User) {
+    const project = await this.projectsService.findOneByUser(user);
+    if (!project) throw new NotFoundException(`No project found for user ${user.username}.`);
+    if (project.secretkeyfile == "") throw new NotFoundException(`Project ${project.name} doesn't have a Secret Key File.`);
+
+    if (!this.firebaseApp) {
+      this.firebaseApp = await firebase.initializeApp({
+        credential: firebase.credential.cert(`./static/projects/${project.secretkeyfile}`)
+      });
+    }
+
+    this.logger.log(`Firebase initilized with ./static/projects/${project.secretkeyfile} file`);
+  }
+
 
 }

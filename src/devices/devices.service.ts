@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -106,8 +106,7 @@ export class DevicesService {
     if (channelToAdd == null)
       throw new NotFoundException(`Channel ${deviceChannelDto.channel} not found on ${applicationID}`)
 
-
-    //Check if channel exist in device already
+    //Check if the channel already exist in the device 
     const isChannelAlreadySubscribed = device.channels.some(channel => channel.id === channelToAdd.id);
 
     if (isChannelAlreadySubscribed) return device
@@ -126,6 +125,7 @@ export class DevicesService {
   }
 
   async unSubscribe(token: string, deviceChannelDto: DeviceChannelDto): Promise<Device | undefined> {
+    if (deviceChannelDto.channel == "default") throw new UnauthorizedException("You can not unsubscribe from default channel")
     const { device, applicationID } = await this.findOne(token);
 
     const channelToRemove = await this.channelsService.findOneByNameApp(deviceChannelDto.channel, applicationID);

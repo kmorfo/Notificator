@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsObject, IsOptional, IsString, IsUrl, Matches, MaxLength, MinLength } from "class-validator";
+import { Type } from "class-transformer";
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsInt, IsObject, IsOptional, IsString, IsUrl, MAX, Matches, Max, MaxLength, Min, MinLength, Validate } from "class-validator";
 
 export class CreateMessageDto {
     @ApiProperty({
@@ -61,17 +62,36 @@ export class CreateMessageDto {
     @MinLength(2)
     channel?: string;
 
+    //TODO Añadir Swagger docs al timer
+
     @IsOptional()
     @IsString()
     @Matches(/^([01]\d|2[0-3]):([0-5]\d)?$/, { message: 'Time format must be HH:MM' })
     time?: string;
 
     @IsOptional()
-    @IsString()
-    @Matches(/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/(20\d{2}|19\d{2})$/, { message: 'Date format must be DD/MM/YYYY' })
-    date?: string;
+    @IsInt({ message: 'Day must be a number' })
+    @Min(1, { message: 'Day must be between 1 and 31' })
+    @Max(31, { message: 'Day must be between 1 and 31' })
+    day?: number;
 
+    @IsOptional()
+    @IsArray()
+    @ArrayMinSize(1, { message: 'You must provide at least one day.' })
+    @ArrayMaxSize(7, { message: 'Cannot provide more than 7 days.' })
+    @Min(0, {each: true}) // each number in array is 0 or higher
+    @Max(7, {each: true}) // each number in array is 2 or lower
+    @ArrayUnique((value: number) => value, { message: 'The days must be unique.' })
+    @Type(() => Number)
+    readonly days?: number[];
 
-    //https://www.npmjs.com/package/node-cron
-
+    @IsOptional()
+    @IsArray()
+    @ArrayMinSize(1, { message: 'You must provide at least one month.' })
+    @ArrayMaxSize(12, { message: 'Cannot provide more than 12 months.' })
+    @Min(1, {each: true}) // each number in array is 0 or higher
+    @Max(12, {each: true}) // each number in array is 2 or lower
+    @ArrayUnique((value: number) => value, { message: 'The months must be unique.' })
+    @Type(() => Number)
+    readonly months?: number[];
 }
