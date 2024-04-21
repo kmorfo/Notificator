@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -8,12 +8,12 @@ import * as firebase from 'firebase-admin';
 import { Channel } from 'src/channels/entities/channel.entity';
 import { ChannelsService } from 'src/channels/channels.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { DeleteTaskDto } from './dto/delete-task.dto';
 import { DevicesService } from 'src/devices/devices.service';
 import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
 import { FilterMessageDto } from './dto/filter-message.dto';
 import { Message } from './entities/message.entity';
 import { ProjectsService } from '../projects/projects.service';
+import { TasksService } from '../tasks/tasks.service';
 import { User } from 'src/users/entities/user.entity';
 
 
@@ -31,6 +31,8 @@ export class MessagesService {
     private readonly devicesService: DevicesService,
     private readonly errorHandlingService: ErrorHandlingService,
     private readonly projectsService: ProjectsService,
+    @Inject(forwardRef(() => TasksService))
+    private readonly tasksService: TasksService,
   ) {
     this.cron = cron;
     this.scheduledTasks = {};
@@ -51,7 +53,7 @@ export class MessagesService {
     if (!createMessageDto.time)
       return await this.createMessage(createMessageDto, channelMsg, user, tokens)
     else
-      return await this.scheduleTask(createMessageDto, channelMsg, user, tokens)
+      return await this.tasksService.scheduleTask(createMessageDto, channelMsg, user, tokens)
   }
 
   async createTest(createMessageDto: CreateMessageDto, user: User, token: string): Promise<Message | undefined | String> {
@@ -69,11 +71,11 @@ export class MessagesService {
     if (!createMessageDto.time)
       return await this.createMessage(createMessageDto, channelMsg, user, tokens)
     else
-      return await this.scheduleTask(createMessageDto, channelMsg, user, tokens)
+      return await this.tasksService.scheduleTask(createMessageDto, channelMsg, user, tokens)
   }
 
 
-  private async createMessage(createMessageDto: CreateMessageDto, channelMsg: Channel, user: User, tokens: string[]): Promise<Message | undefined> {
+  async createMessage(createMessageDto: CreateMessageDto, channelMsg: Channel, user: User, tokens: string[]): Promise<Message | undefined> {
     const { applicationId, channel, ...messageData } = createMessageDto;
 
     try {
@@ -153,67 +155,6 @@ export class MessagesService {
 
     return messages
   }
-
-
-  private scheduleTask(createMessageDto, channelMsg, user, tokens): String {
-    let cronPattern = '';
-
-    //If we had sent any time params, it will add to cronPattern
-    if (createMessageDto.time) {
-      const [hour, minute] = createMessageDto.time.split(':');
-      cronPattern += `${minute || '*'} ${hour || '*'} `;
-    } else {
-      cronPattern += '0 0 ';
-    }
-
-    if (createMessageDto.day) {
-      cronPattern += `${createMessageDto.day} `;
-    } else {
-      cronPattern += '* ';
-    }
-
-    if (createMessageDto.months && createMessageDto.months.length > 0) {
-      const monthsPattern = createMessageDto.months.join(',');
-      cronPattern += `${monthsPattern} `;
-    } else {
-      cronPattern += '* ';
-    }
-
-    if (createMessageDto.days && createMessageDto.days.length > 0) {
-      const daysPattern = createMessageDto.days.join(',');
-      cronPattern += `${daysPattern} `;
-    } else {
-      cronPattern += '*';
-    }
-
-    const task = this.cron.schedule(cronPattern, () => {
-      this.createMessage(createMessageDto, channelMsg, user, tokens)
-    });
-
-    task.jobName = `${createMessageDto.applicationId}#${cronPattern}#${new Date().getTime().toString()}`
-    this.scheduledTasks[task.jobName] = task;
-
-    return `The message was scheduled correctly #${cronPattern}`;
-  }
-
-  findTasksBy(applicationID: String): string[] {
-    const tasks = Object.values(this.scheduledTasks).filter(task => task.jobName.includes(applicationID));
-    return tasks.map(task => task.jobName);
-  }
-
-  removeTasksBy(deleteTaskDto: DeleteTaskDto): string {
-    const taskToDelete = this.scheduledTasks[deleteTaskDto.taskId]
-
-    if (!taskToDelete || taskToDelete == undefined)
-      throw new NotFoundException(`Task with id ${deleteTaskDto.taskId} not found.`);
-
-    taskToDelete.stop();
-
-    delete this.scheduledTasks[deleteTaskDto.taskId];
-
-    return `Task with id: ${deleteTaskDto.taskId} was removed`
-  }
-
 
   async initializeFirebaseApp(user: User) {
     const project = await this.projectsService.findOneByUser(user);

@@ -10,6 +10,7 @@ import { MailModule } from './mail/mail.module';
 import { MessagesModule } from './messages/messages.module';
 import { ProjectsModule } from './projects/projects.module';
 import { UsersModule } from './users/users.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { UsersModule } from './users/users.module';
     MessagesModule,
     ProjectsModule,
     UsersModule,
+    TasksModule,
     ],
   controllers: [],
   providers: [],

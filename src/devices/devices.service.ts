@@ -1,16 +1,16 @@
 import { BadRequestException, Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isUUID } from 'class-validator';
 import { Repository } from 'typeorm';
 
 import { ApplicationsService } from 'src/applications/applications.service';
+import { ChannelsService } from 'src/channels/channels.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { Device } from './entities/device.entity';
-import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
-import { isUUID } from 'class-validator';
-import { UpdateDeviceDto } from './dto/update-device.dto';
-import { ChannelsService } from 'src/channels/channels.service';
 import { DeviceChannelDto } from './dto/device-channel.dto';
+import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
+import { UpdateDeviceDto } from './dto/update-device.dto';
 
 @Injectable()
 export class DevicesService {
