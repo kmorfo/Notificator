@@ -21,7 +21,7 @@ Incluye las siguientes características:
 * Envío de notificaciones
   * Imagen opcional
   * Extra data opcional en formato JSON 
-* Notification Scheduling
+* Programar el envío notificaciones 
 
 # Notificator API
 1. Clonar repositorio
