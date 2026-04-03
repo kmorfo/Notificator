@@ -1,10 +1,10 @@
 import { Injectable, CanActivate, ExecutionContext, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { Request } from 'express';
 
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 import { DevicesService } from '../devices.service';
-import { ApplicationsService } from 'src/applications/applications.service';
-import { Application } from 'src/applications/entities/application.entity';
+import { ApplicationsService } from '../../applications/applications.service';
+import { Application } from '../../applications/entities/application.entity';
 
 @Injectable()
 export class SameAppGuard implements CanActivate {
@@ -18,7 +18,7 @@ export class SameAppGuard implements CanActivate {
         const user = req.user as User;
 
         //Extract id token from params
-        const deviceToken = req.params.term
+        const deviceToken = Array.isArray(req.params.term) ? req.params.term[0] : req.params.term;
 
         const { device, applicationID } = await this.getDeviceData(deviceToken)
         if (!device) throw new NotFoundException(`Device ${deviceToken} not found.`)

@@ -5,16 +5,16 @@ import { Repository } from 'typeorm';
 import { isUUID } from 'class-validator';
 
 import { Application } from './entities/application.entity';
-import { ChannelsService } from 'src/channels/channels.service';
+import { ChannelsService } from '../channels/channels.service';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { CreateAppUserDto } from './dto/create-app-user.dto';
-import { CreateChannelDto } from 'src/channels/dto/create-channel.dto';
-import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
-import { ProjectsService } from 'src/projects/projects.service';
+import { CreateChannelDto } from '../channels/dto/create-channel.dto';
+import { ErrorHandlingService } from '../common/error-handling/error-handling.service';
+import { PaginationDto } from '../common/dtos/pagination.dto';
+import { ProjectsService } from '../projects/projects.service';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { User } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
+import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class ApplicationsService {

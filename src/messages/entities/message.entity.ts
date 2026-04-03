@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Application } from "src/applications/entities/application.entity";
-import { Channel } from "src/channels/entities/channel.entity";
-import { Device } from "src/devices/entities/device.entity";
-import { User } from "src/users/entities/user.entity";
+import { Application } from "../../applications/entities/application.entity";
+import { Channel } from "../../channels/entities/channel.entity";
+import { Device } from "../../devices/entities/device.entity";
+import { User } from "../../users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('messages')

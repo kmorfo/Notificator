@@ -2,9 +2,9 @@ import { Body, Controller, Delete, Get, Param, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { Auth } from 'src/auth/decorators';
+import { Auth } from '../auth/decorators';
 import { DeleteTaskDto } from './dto/delete-task.dto';
-import { SameAppUserGuard } from 'src/common/guards/same-app-user.guard';
+import { SameAppUserGuard } from '../common/guards/same-app-user.guard';
 import { TasksService } from './tasks.service';
 
 @ApiTags('Tasks')

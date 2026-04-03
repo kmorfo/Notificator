@@ -7,11 +7,11 @@ import { isUUID } from 'class-validator';
 import * as fs from 'fs';
 
 import { CreateProjectDto } from './dto/create-project.dto';
-import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { ErrorHandlingService } from '../common/error-handling/error-handling.service';
+import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Project } from './entities/project.entity';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class ProjectsService {

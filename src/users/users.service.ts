@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
-import { CreateAppUserDto } from 'src/applications/dto/create-app-user.dto';
-import { CreateUserDto, ResetPasswordDto } from 'src/auth/dto';
-import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
+import { CreateAppUserDto } from '../applications/dto/create-app-user.dto';
+import { CreateUserDto, ResetPasswordDto } from '../auth/dto';
+import { ErrorHandlingService } from '../common/error-handling/error-handling.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 

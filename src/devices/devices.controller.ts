@@ -3,14 +3,14 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
 import { AppAllowedGuard } from './guards/app-allowed.guard';
-import { Auth } from 'src/auth/decorators';
+import { Auth } from '../auth/decorators';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { Device } from './entities/device.entity';
 import { DeviceChannelDto } from './dto/device-channel.dto';
 import { DevicesService } from './devices.service';
 import { SameAppGuard } from './guards/same-app.guard';
 import { UpdateDeviceDto } from './dto/update-device.dto';
-import { ValidRoles } from 'src/auth/interfaces';
+import { ValidRoles } from '../auth/interfaces';
 
 @ApiTags('Devices')
 @Controller('devices')

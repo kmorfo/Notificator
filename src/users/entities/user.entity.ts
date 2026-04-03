@@ -1,8 +1,8 @@
 
 import { ApiProperty } from "@nestjs/swagger";
-import { Application } from "src/applications/entities/application.entity";
-import { Message } from "src/messages/entities/message.entity";
-import { Project } from "src/projects/entities/project.entity";
+import { Application } from "../../applications/entities/application.entity";
+import { Message } from "../../messages/entities/message.entity";
+import { Project } from "../../projects/entities/project.entity";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users')

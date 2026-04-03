@@ -1,10 +1,10 @@
 import { Injectable, CanActivate, ExecutionContext, NotFoundException } from '@nestjs/common';
 import { Request } from 'express';
 
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../../users/entities/user.entity';
 
-import { ApplicationsService } from 'src/applications/applications.service';
-import { Application } from 'src/applications/entities/application.entity';
+import { ApplicationsService } from '../../applications/applications.service';
+import { Application } from '../../applications/entities/application.entity';
 
 @Injectable()
 export class SameAppUserGuard implements CanActivate {

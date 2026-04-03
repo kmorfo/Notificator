@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import { ApplicationsService } from 'src/applications/applications.service';
+import { ApplicationsService } from '../applications/applications.service';
 import { Channel } from './entities/channel.entity';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
+import { ErrorHandlingService } from '../common/error-handling/error-handling.service';
 
 
 @Injectable()

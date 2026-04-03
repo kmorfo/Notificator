@@ -5,16 +5,16 @@ import { Repository } from 'typeorm';
 import * as cron from 'node-cron';
 import * as firebase from 'firebase-admin';
 
-import { Channel } from 'src/channels/entities/channel.entity';
-import { ChannelsService } from 'src/channels/channels.service';
+import { Channel } from '../channels/entities/channel.entity';
+import { ChannelsService } from '../channels/channels.service';
 import { CreateMessageDto } from './dto/create-message.dto';
-import { DevicesService } from 'src/devices/devices.service';
-import { ErrorHandlingService } from 'src/common/error-handling/error-handling.service';
+import { DevicesService } from '../devices/devices.service';
+import { ErrorHandlingService } from '../common/error-handling/error-handling.service';
 import { FilterMessageDto } from './dto/filter-message.dto';
 import { Message } from './entities/message.entity';
 import { ProjectsService } from '../projects/projects.service';
 import { TasksService } from '../tasks/tasks.service';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 
 @Injectable()

@@ -5,13 +5,13 @@ import { AuthGuard } from '@nestjs/passport';
 import { AdminSameProjectGuard } from './guards/admin-same-project.guard';
 import { Application } from './entities/application.entity';
 import { ApplicationsService } from './applications.service';
-import { Auth, GetUser } from 'src/auth/decorators';
+import { Auth, GetUser } from '../auth/decorators';
 import { CreateApplicationDto } from './dto/create-application.dto';
 import { CreateAppUserDto } from './dto/create-app-user.dto';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { PaginationDto } from '../common/dtos/pagination.dto';
 import { UpdateApplicationDto } from './dto/update-application.dto';
-import { User } from 'src/users/entities/user.entity';
-import { ValidRoles } from 'src/auth/interfaces';
+import { User } from '../users/entities/user.entity';
+import { ValidRoles } from '../auth/interfaces';
 
 @ApiTags('Applications')
 @Controller('applications')

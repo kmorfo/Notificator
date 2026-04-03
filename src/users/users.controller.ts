@@ -1,11 +1,11 @@
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Body, Controller, Get, Patch } from "@nestjs/common";
 
-import { Auth, GetUser } from "src/auth/decorators";
+import { Auth, GetUser } from "../auth/decorators";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { User } from "./entities/user.entity";
 import { UsersService } from "./users.service";
-import { ValidRoles } from "src/auth/interfaces";
+import { ValidRoles } from "../auth/interfaces";
 
 
 @ApiTags('Users')

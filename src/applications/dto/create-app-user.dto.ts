@@ -1,7 +1,7 @@
 
 import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsEmail, IsEnum, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
-import { ValidRoles } from "src/auth/interfaces";
+import { ValidRoles } from "../../auth/interfaces";
 
 export class CreateAppUserDto {
 

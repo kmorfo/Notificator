@@ -4,11 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Application } from './entities/application.entity';
 import { ApplicationsController } from './applications.controller';
 import { ApplicationsService } from './applications.service';
-import { AuthModule } from 'src/auth/auth.module';
-import { ProjectsModule } from 'src/projects/projects.module';
-import { UsersModule } from 'src/users/users.module';
-import { ChannelsModule } from 'src/channels/channels.module';
-import { CommonModule } from 'src/common/common.module';
+import { AuthModule } from '../auth/auth.module';
+import { ProjectsModule } from '../projects/projects.module';
+import { UsersModule } from '../users/users.module';
+import { ChannelsModule } from '../channels/channels.module';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   controllers: [ApplicationsController],

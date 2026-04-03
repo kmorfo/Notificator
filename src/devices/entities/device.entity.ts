@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-import { Application } from "src/applications/entities/application.entity";
-import { Channel } from "src/channels/entities/channel.entity";
-import { Message } from "src/messages/entities/message.entity";
+import { Application } from "../../applications/entities/application.entity";
+import { Channel } from "../../channels/entities/channel.entity";
+import { Message } from "../../messages/entities/message.entity";
 
 @Entity('devices')
 export class Device {

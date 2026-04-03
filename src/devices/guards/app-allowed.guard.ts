@@ -1,8 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Request } from 'express';
 
-import { ApplicationsService } from 'src/applications/applications.service';
-import { Application } from 'src/applications/entities/application.entity';
+import { ApplicationsService } from '../../applications/applications.service';
+import { Application } from '../../applications/entities/application.entity';
 
 @Injectable()
 export class AppAllowedGuard implements CanActivate {

@@ -1,9 +1,9 @@
 import { Injectable, CanActivate, ExecutionContext, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { Request } from 'express';
 
-import { User } from 'src/users/entities/user.entity';
-import { ProjectsService } from 'src/projects/projects.service';
-import { Project } from 'src/projects/entities/project.entity';
+import { User } from '../../users/entities/user.entity';
+import { ProjectsService } from '../../projects/projects.service';
+import { Project } from '../../projects/entities/project.entity';
 
 @Injectable()
 export class AdminSameProjectGuard implements CanActivate {

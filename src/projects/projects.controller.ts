@@ -2,15 +2,15 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query, ParseUUIDPipe, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 
-import { Auth, GetUser } from 'src/auth/decorators';
+import { Auth, GetUser } from '../auth/decorators';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { NotAnotherProjectGuard } from './guards/not-another-project.guard';
-import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { PaginationDto } from '../common/dtos/pagination.dto';
 import { Project } from './entities/project.entity';
 import { ProjectsService } from './projects.service';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { User } from 'src/users/entities/user.entity';
-import { ValidRoles } from 'src/auth/interfaces';
+import { User } from '../users/entities/user.entity';
+import { ValidRoles } from '../auth/interfaces';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 

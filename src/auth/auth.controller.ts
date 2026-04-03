@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { Auth, GetUser } from 'src/auth/decorators';
+import { Auth, GetUser } from '../auth/decorators';
 import { AuthService } from './auth.service';
 import { CreateUserDto, LoginUserDto, ResetPasswordDto } from './dto';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 
 @ApiTags('Auth')
 @Controller('auth')

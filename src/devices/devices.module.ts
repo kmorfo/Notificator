@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationsModule } from 'src/applications/applications.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { ApplicationsModule } from '../applications/applications.module';
+import { AuthModule } from '../auth/auth.module';
 import { Device } from './entities/device.entity';
 import { DevicesController } from './devices.controller';
 import { DevicesService } from './devices.service';
-import { UsersModule } from 'src/users/users.module';
-import { CommonModule } from 'src/common/common.module';
-import { ChannelsModule } from 'src/channels/channels.module';
+import { UsersModule } from '../users/users.module';
+import { CommonModule } from '../common/common.module';
+import { ChannelsModule } from '../channels/channels.module';
 
 @Module({
   controllers: [DevicesController],

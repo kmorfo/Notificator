@@ -2,14 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseUUID
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
-import { Auth } from 'src/auth/decorators';
+import { Auth } from '../auth/decorators';
 import { Channel } from './entities/channel.entity';
 import { ChannelsService } from './channels.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
-import { NotAnotherChannelGuard } from 'src/applications/guards/not-another-channel.guard';
+import { NotAnotherChannelGuard } from '../applications/guards/not-another-channel.guard';
 import { SameAppUserGuard } from '../common/guards/same-app-user.guard';
 import { UpdateChannelDto } from './dto/update-channel.dto';
-import { ValidRoles } from 'src/auth/interfaces';
+import { ValidRoles } from '../auth/interfaces';
 
 
 @ApiTags('Channels')

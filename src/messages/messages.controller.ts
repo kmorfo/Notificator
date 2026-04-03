@@ -2,13 +2,13 @@ import { Controller, Get, Post, Body, UseGuards, Query, Param, Delete } from '@n
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 
-import { Auth, GetUser } from 'src/auth/decorators';
+import { Auth, GetUser } from '../auth/decorators';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { FilterMessageDto } from './dto/filter-message.dto';
 import { Message } from './entities/message.entity';
 import { MessagesService } from './messages.service';
-import { SameAppUserGuard } from 'src/common/guards/same-app-user.guard';
-import { User } from 'src/users/entities/user.entity';
+import { SameAppUserGuard } from '../common/guards/same-app-user.guard';
+import { User } from '../users/entities/user.entity';
 
 export class ApiResponseUnion {
   message?: Message;

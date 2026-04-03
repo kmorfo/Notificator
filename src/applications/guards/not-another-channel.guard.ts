@@ -1,7 +1,7 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 
 import { ChannelsService } from '../../channels/channels.service';
-import { Channel } from "src/channels/entities/channel.entity";
+import { Channel } from "../../channels/entities/channel.entity";
 
 @Injectable()
 export class NotAnotherChannelGuard implements CanActivate {
